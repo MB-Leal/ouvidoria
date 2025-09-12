@@ -1,0 +1,63 @@
+@import 'bootstrap';
+
+/* Estilizações das páginas */
+.navbar-custom {
+    background-image: linear-gradient(to right, #004d9c, #ffffff);
+    padding: 1.5rem 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-custom .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff !important; /* Cor do texto do logo */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-custom .nav-link {
+    font-size: 1rem;
+    color: #ffffff !important; /* Cor do texto do menu para garantir o contraste */
+    font-weight: 500;
+    margin-right: 1.5rem;
+    transition: color 0.3s;
+}
+
+.navbar-custom .nav-link:hover {
+    color: #f1f1f1 !important;
+}
+
+/* Garante que o conteúdo não fique escondido sob a barra de navegação */
+body {
+    padding-top: 70px;
+}
+/* Estilos para os links do lado direito do cabeçalho */
+.navbar-right-links .nav-link {
+    color: #004d9c !important;
+}
+
+/* Garante que o hover funcione corretamente */
+.navbar-right-links .nav-link:hover {
+    color: #007bff !important;
+}
+
+/* Definições de cores personalizadas */
+:root {
+    --fasp-blue: #004d9c;
+    --fasp-light-blue: #007bff;
+}
+
+.bg-blue_fas {
+    background-color: var(--fasp-blue) !important;
+}
+
+.border-blue_fas {
+    border: 1px solid var(--fasp-blue) !important;
+}
+
+.icons-canais {
+    color: var(--fasp-blue);
+}
+
+.text-canais {
+    color: var(--fasp-blue);
+}
