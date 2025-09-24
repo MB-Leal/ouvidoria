@@ -52,18 +52,17 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">                    
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('fale-conosco.create') }}">Fale Conosco</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link"  href="{{ route('demanda.create', ['tipo' => 'reclamacao']) }}">Registrar Reclamação</a>
-                    </li>
+                        <a class="nav-link" href="{{ route('demanda.create', ['tipo' => 'reclamacao']) }}">Registrar Reclamação</a>                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('demanda.create', ['tipo' => 'sugestao']) }}">Registrar Sugestão</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('demanda.consultar') }}">Consultar Demanda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('fale-conosco.create') }}">Fale Conosco</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto navbar-right-links">

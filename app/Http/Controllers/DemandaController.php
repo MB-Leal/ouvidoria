@@ -6,43 +6,37 @@ use App\Models\Demanda;
 use App\Models\TipoDemanda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Notifications\DemandaRegistrada;
-use Illuminate\Support\Facades\Notification;
-use App\Http\Requests\StoreDemandaRequest;
-use Illuminate\Support\Facades\DB;
 
 class DemandaController extends Controller
 {
-    // Método para exibir a página de seleção do tipo de demanda
-    public function index()
+    // Método para exibir o formulário de registro com base no tipo
+    public function create($tipo)
     {
-        $tipos = TipoDemanda::all();
-        // A visualização é 'demandas.index', que é pública.
-        return view('demandas.index', compact('tipos'));
+        // Busca o objeto TipoDemanda no banco de dados
+        $tipoDemanda = TipoDemanda::where('slug', $tipo)->firstOrFail();
+        return view('demandas.create', ['tipo' => $tipoDemanda]);
     }
 
-    // Método para exibir o formulário de registro
-    public function create(TipoDemanda $tipo)
+    // Método para processar o formulário
+    public function store(Request $request)
     {
-        return view('demandas.create', compact('tipo'));
-    }
+        $request->validate([
+            'tipo_id' => 'required|exists:tipo_demandas,id', // Validação do ID do tipo
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'assunto' => 'required|string|max:255',
+            'mensagem' => 'required|string',
+        ]);
 
-    // Método para salvar a nova demanda no banco de dados
-    public function store(StoreDemandaRequest $request)
-    {
-        $demanda = new Demanda();
+        $demanda = new Demanda;
+        $demanda->tipo_id = $request->tipo_id; // Armazena o ID do tipo
         $demanda->nome = $request->nome;
         $demanda->email = $request->email;
-        $demanda->telefone = $request->telefone;
-        $demanda->tipo_id = $request->tipo_id;
+        $demanda->assunto = $request->assunto;
         $demanda->mensagem = $request->mensagem;
         $demanda->status = 'Recebido';
         $demanda->protocolo = (string) Str::uuid();
         $demanda->save();
-
-        if ($demanda->email) {
-            Notification::route('mail', $demanda->email)->notify(new DemandaRegistrada($demanda));
-        }
 
         return redirect()->route('demanda.sucesso')->with('protocolo', $demanda->protocolo)->with('email', $demanda->email);
     }
@@ -65,27 +59,11 @@ class DemandaController extends Controller
                           ->where('email', $request->email)
                           ->with('tipo', 'pareceres')
                           ->first();
-
+                          
         if (!$demanda) {
-            return redirect()->route('demanda.consultar')->with('status', 'Protocolo ou e-mail inválidos. Por favor, verifique e tente novamente.');
+            return back()->withErrors(['message' => 'Demanda não encontrada. Verifique o protocolo e e-mail.']);
         }
-
-        return view('demandas.detalhes_consulta', compact('demanda'));
-    }
-
-    // Método para exibir relatórios públicos
-    public function relatoriosPublicos()
-    {
-        $totalDemandas = Demanda::count();
-        $demandasSolucionadas = Demanda::where('status', 'Solucionado')->count();
-
-        $elogios = Demanda::whereHas('tipo', function ($query) {
-            $query->where('nome', 'Elogio');
-        })
-        ->inRandomOrder()
-        ->limit(3)
-        ->get();
         
-        return view('demandas.relatorios', compact('totalDemandas', 'demandasSolucionadas', 'elogios'));
+        return view('demandas.show', ['demanda' => $demanda]);
     }
 }

@@ -80,3 +80,39 @@ body {
 .social-links-search .form-control-sm {
     font-size: 0.85rem;
 }
+/* Espaçamento entre a barra superior e o menu */
+.navbar-custom {
+    top: 50px;
+}
+
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Estilização dos links da barra superior */
+.social-links-search a {
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.social-links-search a:hover {
+    color: #004d9c;
+}
+
+/* Estilo do campo de busca */
+.social-links-search .form-control-sm {
+    border-radius: 20px;
+    padding-left: 15px;
+    border-color: #ced4da;
+    transition: all 0.3s ease;
+}
+
+.social-links-search .form-control-sm:focus {
+    box-shadow: none;
+    border-color: #004d9c;
+}
