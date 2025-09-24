@@ -74,7 +74,8 @@
                 <div class="card" style="width: 18rem;">
                     <img src="{{ asset('assets/imgs/relatorios.png') }}" class="card-img-top" alt="..." style="height: 150px;">
                     <div class="card-body">
-                        <h5 class="card-title">Relatório de Demandas</h5>
+                        <h5 class="card-title">Relatório/Gráfico de Demandas</h5>
+                        <p class="card-text text-muted">Dados das demandas registradas no ano corrente.</p>
                         <a href="{#}" class="btn btn-primary"><i class="bi bi-file-earmark-bar-graph-fill"></i></i></a>
                     </div>
                 </div>

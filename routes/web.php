@@ -5,6 +5,8 @@ use App\Http\Controllers\DemandaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin; // Importa a pasta Admin para facilitar
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FaleConoscoController;
+use App\Http\Controllers\BuscaController;
 
 
 /*
@@ -25,6 +27,11 @@ Route::get('/consultar-demanda', [DemandaController::class, 'showConsultaForm'])
 Route::post('/consultar-demanda', [DemandaController::class, 'showDemanda'])->name('demanda.show');
 
 Route::get('/relatorios-publicos', [DemandaController::class, 'relatoriosPublicos'])->name('demanda.relatorios');
+
+Route::get('/fale-conosco', [FaleConoscoController::class, 'create'])->name('fale-conosco.create');
+Route::post('/fale-conosco', [FaleConoscoController::class, 'store'])->name('fale-conosco.store');
+
+Route::get('/buscar', [BuscaController::class, 'index'])->name('buscar');
 
 // Rotas de autenticação do Laravel Breeze
 require __DIR__.'/auth.php';

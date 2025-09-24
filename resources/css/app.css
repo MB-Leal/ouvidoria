@@ -1,4 +1,5 @@
 @import 'bootstrap';
+@import '@fortawesome/fontawesome-free/css/all.css';
 
 /* Estilizações das páginas */
 .navbar-custom {
@@ -60,4 +61,22 @@ body {
 
 .text-canais {
     color: var(--fasp-blue);
+}
+/* Estilos para a barra superior */
+.top-bar {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.accessibility-tools .btn {
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+}
+
+.social-links-search a {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.social-links-search .form-control-sm {
+    font-size: 0.85rem;
 }
