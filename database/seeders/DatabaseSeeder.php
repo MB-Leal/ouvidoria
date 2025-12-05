@@ -13,8 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            PerfisSeeder::class,
-            TipoDemandaSeeder::class, // Adicione esta linha
+            PerfisSeeder::class,            
         ]);        
     }
 }

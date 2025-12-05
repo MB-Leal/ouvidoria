@@ -16,14 +16,15 @@ return new class extends Migration
             $table->string('nome')->nullable();
             $table->string('email')->nullable();
             $table->string('telefone', 20)->nullable();
-            $table->unsignedBigInteger('tipo_id');
+            $table->string('assunto', 255);
+            $table->unsignedBigInteger('tipo_id')->nullable();
             $table->string('protocolo', 50)->unique();
             $table->string('status', 50);
             $table->text('mensagem');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('tipo_id')->references('id')->on('tipos_demanda')->onDelete('cascade');
+            $table->foreign('tipo_id')->references('id')->on('tipos_demanda')->onDelete('set null');
         });
     }
 
