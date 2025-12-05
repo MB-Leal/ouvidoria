@@ -21,7 +21,7 @@ class DemandaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tipo_id' => 'required|exists:tipo_demandas,id', // Validação do ID do tipo
+            'tipo_id' => 'required|exists:tipos_demanda,id', // Validação do ID do tipo
             'nome' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'assunto' => 'required|string|max:255',
