@@ -1,65 +1,43 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DemandaController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Admin; // Importa a pasta Admin para facilitar
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FaleConoscoController;
-use App\Http\Controllers\BuscaController;
 
+use App\Http\Controllers\ManifestacaoController;
 
 /*
- * ROTAS PÚBLICAS
- */
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
 Route::get('/', function () {
     return view('welcome');
+})->name('home');
+
+// Rotas públicas
+Route::get('/nova-manifestacao', [ManifestacaoController::class, 'create'])->name('manifestacoes.create');
+Route::post('/manifestacoes', [ManifestacaoController::class, 'store'])->name('manifestacoes.store');
+Route::get('/acompanhar', [ManifestacaoController::class, 'acompanhar'])->name('manifestacoes.acompanhar');
+Route::post('/buscar', [ManifestacaoController::class, 'buscar'])->name('manifestacoes.buscar');
+Route::get('/manifestacoes/{manifestacao}', [ManifestacaoController::class, 'show'])->name('manifestacoes.show');
+
+
+// Rotas administrativas (protegidas)
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        $stats = [
+            'total' => \App\Models\Manifestacao::count(),
+            'abertas' => \App\Models\Manifestacao::where('status', 'ABERTO')->count(),
+            'em_analise' => \App\Models\Manifestacao::where('status', 'EM_ANALISE')->count(),
+            'respondidas' => \App\Models\Manifestacao::where('status', 'RESPONDIDO')->count(),
+        ];
+        return view('admin.dashboard', compact('stats'));
+    })->name('dashboard');
 });
 
-Route::get('/registrar-demanda', [DemandaController::class, 'index'])->name('demanda.index');
-Route::get('/registrar-demanda/{tipo}', [DemandaController::class, 'create'])->name('demanda.create');
-Route::post('/registrar-demanda', [DemandaController::class, 'store'])->name('demanda.store');
-Route::get('/demanda-registrada', function () {
-    return view('demandas.sucesso');
-})->name('demanda.sucesso');
-
-Route::get('/consultar-demanda', [DemandaController::class, 'showConsultaForm'])->name('demanda.consultar');
-Route::post('/consultar-demanda', [DemandaController::class, 'showDemanda'])->name('demanda.show');
-
-Route::get('/relatorios-publicos', [DemandaController::class, 'relatoriosPublicos'])->name('demanda.relatorios');
-
-Route::get('/fale-conosco', [FaleConoscoController::class, 'create'])->name('fale-conosco.create');
-Route::post('/fale-conosco', [FaleConoscoController::class, 'store'])->name('fale-conosco.store');
-
-Route::get('/buscar', [BuscaController::class, 'index'])->name('buscar');
-
-// Rotas de autenticação do Laravel Breeze
 require __DIR__.'/auth.php';
-
-
-/*
- * MÓDULO ADMINISTRATIVO
- * Todas as rotas dentro deste grupo exigem que o usuário esteja autenticado.
- */
-Route::middleware(['auth'])->group(function () {
-    // Dashboard do sistema administrativo
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // Rotas de perfil do usuário (padrão do Breeze)
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Rotas de recurso para gerenciar as demandas (acessível a todos os usuários autenticados)
-    Route::resource('demandas', Admin\DemandaController::class)->names('admin.demandas');
-    
-    // Rota para salvar um novo parecer (acessível a todos os usuários autenticados)
-    Route::post('/demandas/{demanda}/parecer', [Admin\DemandaController::class, 'storeParecer'])->name('admin.demandas.store_parecer');
-
-    // Rota que só usuários com o perfil 'admin' podem acessar
-    Route::middleware(['perfil:admin'])->group(function () {
-        // Rotas de recurso para gerenciar os usuários
-        Route::resource('usuarios', Admin\UsuarioController::class)->names('admin.usuarios');
-    });
-});
-

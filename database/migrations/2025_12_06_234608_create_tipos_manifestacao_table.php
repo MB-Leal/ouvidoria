@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('tipos_manifestacao', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('nome'); // Reclamação, Elogio, Sugestão, Denúncia
+            $table->string('cor')->default('#007bff'); // Cor para exibição
+            $table->integer('prazo_dias')->default(30);
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('tipos_manifestacao');
     }
 };
