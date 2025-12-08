@@ -6,39 +6,90 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ManifestacaoController as AdminManifestacaoController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\TipoManifestacaoController;
+use App\Http\Controllers\Admin\RelatorioController;
 
-// Rotas públicas
+/*
+|--------------------------------------------------------------------------
+| Rotas Públicas
+|--------------------------------------------------------------------------
+| Rotas acessíveis sem autenticação
+*/
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/nova-manifestacao', [ManifestacaoController::class, 'create'])->name('manifestacoes.create');
-Route::post('/manifestacoes', [ManifestacaoController::class, 'store'])->name('manifestacoes.store');
-Route::get('/acompanhar', [ManifestacaoController::class, 'acompanhar'])->name('manifestacoes.acompanhar');
-Route::post('/buscar', [ManifestacaoController::class, 'buscar'])->name('manifestacoes.buscar');
-Route::get('/manifestacoes/{manifestacao}', [ManifestacaoController::class, 'show'])->name('manifestacoes.show');
-
-// Rotas administrativas (protegidas)
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // Manifestações
-    Route::get('/manifestacoes', [AdminManifestacaoController::class, 'index'])->name('manifestacoes.index');
-    Route::get('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'show'])->name('manifestacoes.show');
-    Route::get('/manifestacoes/{manifestacao}/edit', [AdminManifestacaoController::class, 'edit'])->name('manifestacoes.edit');
-    Route::put('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'update'])->name('manifestacoes.update');
-    Route::post('/manifestacoes/{manifestacao}/atribuir', [AdminManifestacaoController::class, 'atribuir'])->name('manifestacoes.atribuir');
-    Route::post('/manifestacoes/{manifestacao}/arquivar', [AdminManifestacaoController::class, 'arquivar'])->name('manifestacoes.arquivar');
-
-    // Usuários (apenas admin)
-    Route::resource('/users', UserController::class)->except(['show']);
-
-    // 🆕 NOVA ROTA PARA GESTÃO DE TIPOS DE MANIFESTAÇÃO (CRUD)
-    Route::resource('tipos', App\Http\Controllers\Admin\TipoManifestacaoController::class)->except(['show']);
-    // 🆕 NOVA ROTA PARA RELATÓRIOS
-    Route::get('relatorios', [App\Http\Controllers\Admin\RelatorioController::class, 'index'])->name('relatorios.index');
+// Manifestações - Área Pública
+Route::prefix('manifestacoes')->name('manifestacoes.')->group(function () {
+    Route::get('/nova', [ManifestacaoController::class, 'create'])->name('create');
+    Route::post('/', [ManifestacaoController::class, 'store'])->name('store');
+    Route::get('/acompanhar', [ManifestacaoController::class, 'acompanhar'])->name('acompanhar');
+    Route::post('/buscar', [ManifestacaoController::class, 'buscar'])->name('buscar');
+    Route::get('/{manifestacao}', [ManifestacaoController::class, 'show'])->name('show');
 });
 
-// Rotas de autenticação
+/*
+|--------------------------------------------------------------------------
+| Rotas Administrativas
+|--------------------------------------------------------------------------
+| Área restrita para usuários autenticados
+*/
+
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Gestão de Manifestações (Admin)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('manifestacoes')->name('manifestacoes.')->group(function () {
+        Route::get('/', [AdminManifestacaoController::class, 'index'])->name('index');
+        Route::get('/{manifestacao}', [AdminManifestacaoController::class, 'show'])->name('show');
+        Route::get('/{manifestacao}/edit', [AdminManifestacaoController::class, 'edit'])->name('edit');
+        Route::put('/{manifestacao}', [AdminManifestacaoController::class, 'update'])->name('update');
+        Route::post('/{manifestacao}/atribuir', [AdminManifestacaoController::class, 'atribuir'])->name('atribuir');
+        Route::post('/{manifestacao}/arquivar', [AdminManifestacaoController::class, 'arquivar'])->name('arquivar');
+    });
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Gestão de Usuários
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('users', UserController::class)->except(['show']);
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Gestão de Tipos de Manifestação (CRUD)
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('tipos', TipoManifestacaoController::class)->except(['show']);
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Relatórios
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('relatorios')->name('relatorios.')->group(function () {
+        Route::get('/', [RelatorioController::class, 'index'])->name('index');
+        // Futuras rotas para relatórios específicos podem ser adicionadas aqui
+        // Route::get('/mensal', [RelatorioController::class, 'mensal'])->name('mensal');
+        // Route::get('/categorias', [RelatorioController::class, 'porCategoria'])->name('categorias');
+    });
+});
+
+// Exemplo futuro:
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('users', UserController::class);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rotas de Autenticação
+|--------------------------------------------------------------------------
+*/
+
 require __DIR__ . '/auth.php';
