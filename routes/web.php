@@ -52,6 +52,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::put('/{manifestacao}', [AdminManifestacaoController::class, 'update'])->name('update');
         Route::post('/{manifestacao}/atribuir', [AdminManifestacaoController::class, 'atribuir'])->name('atribuir');
         Route::post('/{manifestacao}/arquivar', [AdminManifestacaoController::class, 'arquivar'])->name('arquivar');
+        Route::get('/nova-manual', [AdminManifestacaoController::class, 'createManual'])->name('create.manual');
+        Route::post('/salvar-manual', [AdminManifestacaoController::class, 'storeManual'])->name('store.manual');
     });
     
     /*

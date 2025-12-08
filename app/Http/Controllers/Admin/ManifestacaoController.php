@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Manifestacao;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\ProtocoloService;
+use Illuminate\Support\Facades\DB;
 
 class ManifestacaoController extends Controller
 {
@@ -189,4 +191,102 @@ class ManifestacaoController extends Controller
 
         return back()->with('success', 'Manifestação arquivada com sucesso!');
     }
+    public function createManual()
+{
+    $tipos = \App\Models\TipoManifestacao::where('ativo', true)->get();
+    
+    $statuses = [
+        'ABERTO' => 'Aberto',
+        'EM_ANALISE' => 'Em Análise',
+        'RESPONDIDO' => 'Respondido',
+        'FINALIZADO' => 'Finalizado'
+    ];
+    
+    $canais = [
+        'PRESENCIAL' => 'Presencial',
+        'EMAIL' => 'E-mail',
+        'TELEFONE' => 'Telefone/WhatsApp',
+        'WEB' => 'Formulário Web'
+    ];
+    
+    return view('admin.manifestacoes.create-manual', compact('tipos', 'statuses', 'canais'));
+}
+
+/**
+ * Salva uma manifestação cadastrada manualmente
+ */
+public function storeManual(Request $request)
+{
+    $validated = $request->validate([
+        'tipo_manifestacao_id' => 'required|exists:tipos_manifestacao,id',
+        'canal' => 'required|in:PRESENCIAL,EMAIL,TELEFONE,WEB',
+        'status' => 'required|in:ABERTO,EM_ANALISE,RESPONDIDO,FINALIZADO',
+        'nome' => 'nullable|required_if:anonimo,false|string|max:255',
+        'anonimo' => 'boolean',
+        'email' => 'nullable|email',
+        'telefone' => 'nullable|string|max:20',
+        'descricao' => 'required|string|min:10',
+        'anexo' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,doc,docx',
+        'prioridade' => 'required|in:baixa,media,alta,urgente',
+        'observacao_interna' => 'nullable|string',
+    ]);
+
+    // Gerar protocolo
+    $protocolo = ProtocoloService::gerarProtocolo();
+
+    // Preparar dados
+    $dadosManifestacao = [
+        'protocolo' => $protocolo,
+        'tipo_manifestacao_id' => $validated['tipo_manifestacao_id'],
+        'canal' => $validated['canal'],
+        'status' => $validated['status'],
+        'descricao' => $validated['descricao'],
+        'prioridade' => $validated['prioridade'],
+        'observacao_interna' => $validated['observacao_interna'] ?? null,
+    ];
+
+    // Se for anônimo
+    if ($request->boolean('anonimo')) {
+        $dadosManifestacao['nome'] = 'Anônimo';
+        $dadosManifestacao['email'] = null;
+        $dadosManifestacao['telefone'] = null;
+    } else {
+        $dadosManifestacao['nome'] = $validated['nome'];
+        $dadosManifestacao['email'] = $validated['email'] ?? null;
+        $dadosManifestacao['telefone'] = $validated['telefone'] ?? null;
+    }
+
+    // Se já for respondido, registrar data
+    if ($validated['status'] == 'RESPONDIDO') {
+        $dadosManifestacao['respondido_em'] = now();
+        $dadosManifestacao['data_resposta'] = now();
+    }
+
+    // Atribuir ao usuário logado se for ouvidor/secretário
+    $user = auth()->user();
+    if (in_array($user->role, ['ouvidor', 'secretario'])) {
+        $dadosManifestacao['user_id'] = $user->id;
+    }
+
+    DB::beginTransaction();
+    
+    try {
+        $manifestacao = Manifestacao::create($dadosManifestacao);
+
+        // Processar anexo
+        if ($request->hasFile('anexo')) {
+            $path = $request->file('anexo')->store('anexos', 'public');
+            $manifestacao->update(['anexo_path' => $path]);
+        }
+
+        DB::commit();
+
+        return redirect()->route('admin.manifestacoes.show', $manifestacao)
+            ->with('success', 'Manifestação cadastrada manualmente com sucesso! Protocolo: ' . $protocolo);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withErrors(['error' => 'Erro ao cadastrar manifestação: ' . $e->getMessage()]);
+    }
+}
 }

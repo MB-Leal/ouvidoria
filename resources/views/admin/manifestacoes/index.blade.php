@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('title', 'Gerenciar Manifestações')
 
@@ -9,6 +9,13 @@
             <i class="fas fa-comments me-2"></i> Manifestações
         </h1>
     </div>
+    <div class="d-flex justify-content-end mb-4">
+    <a href="{{ route('admin.manifestacoes.create.manual') }}" class="btn btn-primary">
+        <i class="fas fa-plus-circle me-2"></i>
+        <span class="d-none d-sm-inline">Cadastrar Manualmente</span>
+        <span class="d-inline d-sm-none">Manual</span>
+    </a>
+</div>
 
     <!-- Filtros -->
     <div class="card shadow mb-4">

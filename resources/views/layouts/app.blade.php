@@ -162,7 +162,7 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('home') ? 'active fw-bold' : '' }} text-white" 
                            href="{{ route('home') }}">
-                            <i class="bi bi-plus-circle me-1"></i> Nova Manifestação
+                            <i class="bi bi-plus-circle me-1"></i> Nova Manifestação Teste
                         </a>
                     </li>
                     <li class="nav-item">
