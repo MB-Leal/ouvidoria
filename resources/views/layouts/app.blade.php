@@ -169,35 +169,39 @@
                         </a>
                     </li>
                     @auth
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle me-1"></i> {{ Auth::user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                    <i class="bi bi-speedometer2 me-2"></i> Painel Admin
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Sair
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                    @else
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('login') }}">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Admin
-                        </a>
-                    </li>
-                    @endauth
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+        <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
+        <span class="badge bg-{{ Auth::user()->role == 'admin' ? 'danger' : (Auth::user()->role == 'ouvidor' ? 'warning' : 'info') }} ms-1">
+            {{ Auth::user()->role_name }}
+        </span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        @if(Auth::user()->isAdmin() || Auth::user()->isOuvidor() || Auth::user()->isSecretario())
+        <li>
+            <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                <i class="fas fa-tachometer-alt me-2"></i> Painel Admin
+            </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        @endif
+        <li>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt me-2"></i> Sair
+                </button>
+            </form>
+        </li>
+    </ul>
+</li>
+@else
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('login') }}">
+        <i class="fas fa-sign-in-alt me-1"></i> Acesso Admin
+    </a>
+</li>
+@endauth
                 </ul>
             </div>
         </div>

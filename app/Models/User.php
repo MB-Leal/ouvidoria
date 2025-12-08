@@ -14,7 +14,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_admin',
+        'role',
+        'ativo',
     ];
 
     protected $hidden = [
@@ -27,7 +28,71 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean',
+            'ativo' => 'boolean',
         ];
+    }
+
+    // Métodos de verificação de role
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOuvidor(): bool
+    {
+        return $this->role === 'ouvidor';
+    }
+
+    public function isSecretario(): bool
+    {
+        return $this->role === 'secretario';
+    }
+
+    // Verificar permissões específicas
+    public function canVisualizarManifestacoes(): bool
+    {
+        return in_array($this->role, ['admin', 'ouvidor', 'secretario']);
+    }
+
+    public function canResponderManifestacoes(): bool
+    {
+        return in_array($this->role, ['admin', 'ouvidor', 'secretario']);
+    }
+
+    public function canAtribuirManifestacoes(): bool
+    {
+        return in_array($this->role, ['admin', 'ouvidor']);
+    }
+
+    public function canArquivarManifestacoes(): bool
+    {
+        return in_array($this->role, ['admin', 'ouvidor']);
+    }
+
+    public function canGerenciarUsuarios(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function canGerarRelatorios(): bool
+    {
+        return in_array($this->role, ['admin', 'ouvidor']);
+    }
+
+    // Helper para nome formatado do role
+    public function getRoleNameAttribute(): string
+    {
+        return match($this->role) {
+            'admin' => 'Administrador',
+            'ouvidor' => 'Ouvidor',
+            'secretario' => 'Secretário',
+            default => 'Desconhecido'
+        };
+    }
+
+    // Relação com manifestações atribuídas
+    public function manifestacoesAtribuidas()
+    {
+        return $this->hasMany(Manifestacao::class, 'user_id');
     }
 }

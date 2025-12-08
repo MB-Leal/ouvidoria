@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('manifestacoes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users');
             $table->string('protocolo')->unique(); // FASPM-2024-000001
             $table->foreignId('tipo_manifestacao_id')->constrained('tipos_manifestacao');
             $table->string('nome');
@@ -29,16 +30,24 @@ return new class extends Migration
                 'WEB', 
                 'EMAIL', 
                 'TELEFONE', 
-                'PRESENCIAL'
+                'PRESENCIAL',
+                'WHATSAPP'
             ])->default('WEB');
             $table->string('anexo_path')->nullable();
             $table->text('resposta')->nullable();
             $table->timestamp('respondido_em')->nullable();
+            $table->date('data_limite_resposta')->nullable();
             $table->text('observacao_interna')->nullable();
+            $table->timestamp('arquivado_em')->nullable();
+            $table->text('motivo_arquivamento')->nullable();
             $table->timestamps();
             
             $table->index('protocolo');
             $table->index('status');
+            $table->timestamp('data_resposta')->nullable();
+            $table->enum('prioridade', ['baixa', 'media', 'alta', 'urgente'])->default('media');
+            $table->string('setor_responsavel')->nullable();
+            $table->json('tags')->nullable();
             $table->index('created_at');
         });
     }
