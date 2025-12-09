@@ -1,4 +1,5 @@
 🏛️ Sistema de Gestão de Manifestações (Ouvidoria)
+<br>
 📝 Sobre o Projeto
 Este é um sistema Web robusto e intuitivo desenvolvido para a gestão completa de manifestações (denúncias, sugestões, reclamações, elogios e solicitações) de uma Ouvidoria.
 
