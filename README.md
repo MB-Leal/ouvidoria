@@ -1,66 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+🏛️ Sistema de Gestão de Manifestações (Ouvidoria)
+📝 Sobre o Projeto
+Este é um sistema Web robusto e intuitivo desenvolvido para a gestão completa de manifestações (denúncias, sugestões, reclamações, elogios e solicitações) de uma Ouvidoria.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+O sistema permite o registro de manifestações via formulário web ou de forma manual pela equipe, o rastreamento por protocolo, atribuição de responsabilidade por setor/usuário, definição de prioridades, controle de prazos de resposta e manutenção de um histórico completo do atendimento.
 
-## About Laravel
+O painel administrativo oferece funcionalidades para a equipe interna, como a edição de informações de status, prioridade, resposta e observações internas.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+✨ Funcionalidades Principais
+Registro de Manifestações: Permite o cadastro manual pela equipe e a integração para registro via interface pública (não inclusa nos arquivos, mas implícita).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Controle de Protocolo: Geração automática e única de protocolos (ProtocoloService).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Gestão de Status e Prioridade: Definição de ABERTO, EM ANÁLISE, RESPONDIDO e FINALIZADO, além de prioridades (baixa a urgente).
 
-## Learning Laravel
+Atribuição e Responsabilidade: Atribuição de manifestações a usuários específicos (Ouvidor, Secretário ou Admin).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Controle de Prazos: Campo para data_limite_resposta e cálculo de dias restantes.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Registro de Resposta: Campos dedicados para resposta pública e observacao_interna.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Rastreamento de Data: Registro automático de data_resposta quando o status é alterado para RESPONDIDO.
 
-## Laravel Sponsors
+Controle de Acesso (ACL): Definição de permissões baseadas em role (Admin, Ouvidor, Secretário) para edição e atribuição.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+⚙️ Tecnologias Utilizadas
+Framework: Laravel (PHP)
 
-### Premium Partners
+Banco de Dados: MySQL
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Front-end: HTML, CSS, JavaScript (e provavelmente Bootstrap/Blade Templates para o layout de administração).
 
-## Contributing
+Dependências PHP: Composer
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+🚀 Instalação e Configuração (Ambiente Local)
+Siga os passos abaixo para configurar o projeto em sua máquina local:
 
-## Code of Conduct
+Pré-requisitos
+PHP 8.2+
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Composer
 
-## Security Vulnerabilities
+Git
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Servidor de banco de dados (MySQL/MariaDB)
 
-## License
+Passos para a Instalação
+Clone o Repositório:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Bash
+
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+Instale as Dependências do PHP:
+
+Bash
+
+composer install
+Configure o Arquivo de Ambiente: Crie o arquivo .env copiando o exemplo:
+
+Bash
+
+cp .env.example .env
+Gere a Chave da Aplicação:
+
+Bash
+
+php artisan key:generate
+Configure o Banco de Dados: No arquivo .env, configure as credenciais do seu banco de dados:
+
+Snippet de código
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ouvidoria
+DB_USERNAME=root
+DB_PASSWORD=
+Execute as Migrations e Seeders (Opcional):
+
+Bash
+
+php artisan migrate --seed
+Certifique-se de que suas Migrations e Seeders existam e estejam prontas para criar as tabelas users, manifestacoes, tipos_manifestacao, etc.
+
+Crie o Link Simbólico para Storage: Necessário para o armazenamento de anexos (anexo_path).
+
+Bash
+
+php artisan storage:link
+Inicie o Servidor Local:
+
+Bash
+
+php artisan serve
+O sistema estará acessível em http://127.0.0.1:8000.
+
+🔒 Acesso ao Painel Administrativo
+Acesse a URL de administração e utilize as credenciais de um usuário cadastrado com a role apropriada (Admin/Ouvidor/Secretário) para gerir as manifestações:
+
+URL de Acesso: http://127.0.0.1:8000/admin/login
+
+Exemplo de URL de Edição: http://127.0.0.1:8000/admin/manifestacoes/7/edit
+
+🤝 Como Contribuir
+Contribuições são bem-vindas! Se você encontrar bugs, tiver sugestões de novas funcionalidades ou melhorias, sinta-se à vontade para:
+
+Fazer um Fork do projeto.
+
+Criar uma nova branch (git checkout -b feature/minha-melhoria).
+
+Fazer suas alterações e commitar (git commit -am 'feat: Adiciona nova funcionalidade X').
+
+Fazer push para a branch (git push origin feature/minha-melhoria).
+
+Abrir um Pull Request.
+
+📄 Licença
+Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE.md para detalhes.
