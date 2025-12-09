@@ -113,11 +113,12 @@
                 Acesso restrito aos colaboradores da FASPM/PA
             </p>
             <p class="mb-0">
-                © {{ date('Y') }} - Fundação de Apoio à Saúde do Pará
+                © {{ date('Y') }} - Fundo de Assistência Social da PMPA
             </p>
         </div>
     </div>
 </div>
+<span class="text-muted small">Desenvolvido por Marcos Leal</span>
 
 <script>
     // Adicionar validação em tempo real

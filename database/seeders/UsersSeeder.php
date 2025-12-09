@@ -13,7 +13,7 @@ class UsersSeeder extends Seeder
         // Usuário Admin
         User::create([
             'name' => 'Administrador FASPM',
-            'email' => 'admin@faspmpa.com.br',
+            'email' => 'admin@admin.com.br',
             'password' => Hash::make('admin123'),
             'role' => 'admin',
             'ativo' => true,
@@ -22,7 +22,7 @@ class UsersSeeder extends Seeder
         // Usuário Ouvidor
         User::create([
             'name' => 'Ouvidor FASPM',
-            'email' => 'ouvidor@faspmpa.com.br',
+            'email' => 'ouvidor@admin.com.br',
             'password' => Hash::make('ouvidor123'),
             'role' => 'ouvidor',
             'ativo' => true,
@@ -31,7 +31,7 @@ class UsersSeeder extends Seeder
         // Usuário Secretário
         User::create([
             'name' => 'Secretário FASPM',
-            'email' => 'secretario@faspmpa.com.br',
+            'email' => 'secretario@admin.com.br',
             'password' => Hash::make('secretario123'),
             'role' => 'secretario',
             'ativo' => true,

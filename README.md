@@ -77,10 +77,14 @@ DB_PORT=3306
 DB_DATABASE=ouvidoria
 DB_USERNAME=root
 DB_PASSWORD=
+
+
 Execute as Migrations e Seeders (Opcional):
 
 Bash
 
+No VS Code ou cmd
+php artisan migration (para criar as tabelas do banco de dados)
 php artisan migrate --seed
 Certifique-se de que suas Migrations e Seeders existam e estejam prontas para criar as tabelas users, manifestacoes, tipos_manifestacao, etc.
 
@@ -101,6 +105,17 @@ Acesse a URL de administração e utilize as credenciais de um usuário cadastra
 
 URL de Acesso: http://127.0.0.1:8000/admin/login
 
+Se funcionar corretamente, poderá acessar com os dados:
+usuario: admin@admin.com.br
+Senha: admin123
+
+usuario: ouvidor@admin.com.br
+senha: ouvidor123
+
+usuario: secretario@admin.com.br
+senha: secretario123
+
+
 Exemplo de URL de Edição: http://127.0.0.1:8000/admin/manifestacoes/7/edit
 
 🤝 Como Contribuir
@@ -115,6 +130,13 @@ Fazer suas alterações e commitar (git commit -am 'feat: Adiciona nova funciona
 Fazer push para a branch (git push origin feature/minha-melhoria).
 
 Abrir um Pull Request.
+
+Faltam pequenos ajustes para concluir
+
+Dev: Marcos Leal
+E-mail: marcosbleal26@gmail.com
+Whatsapp: +5591981490019
+
 
 📄 Licença
 Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE.md para detalhes.

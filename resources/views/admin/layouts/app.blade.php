@@ -2,6 +2,16 @@
 <html lang="pt-BR">
 
 <head>
+    <!-- 
+        ====================================================
+        Assinatura do Desenvolvedor
+        Projeto: Ouvidoria
+        Autor: Marcos Barroso Leal
+        Data: 09/12/2025
+        E-mail: marcosbleal26@gmail.com
+        Copyright (c) 2025
+        ====================================================
+    -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
