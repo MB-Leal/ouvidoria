@@ -148,7 +148,7 @@ class ManifestacaoController extends Controller
 
         // Se está respondendo, registrar data
         if ($validated['status'] == 'RESPONDIDO' && $manifestacao->status != 'RESPONDIDO') {
-            $validated['respondido_em'] = now();
+            $validated['data_resposta'] = now();
         }
 
         $manifestacao->update($validated);

@@ -196,7 +196,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <span class="badge bg-success">
-                            Respondido em: {{ $manifestacao->data_resposta?->format('d/m/Y H:i') ?? 'Data não disponível' }}
+                            Respondido em: {{ $manifestacao->data_resposta?->format('d/m/Y') ?? 'Data não disponível' }}
                         </span>
                     </div>
                 </div>

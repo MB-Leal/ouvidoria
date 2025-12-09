@@ -45,6 +45,7 @@ class ManifestacaoController extends Controller
             'descricao' => $validated['descricao'],
             'sigilo_dados' => $request->boolean('sigilo_dados'),
             'status' => 'ABERTO',
+            'data_entrada' => now(),
             'canal' => 'WEB'
         ]);
 

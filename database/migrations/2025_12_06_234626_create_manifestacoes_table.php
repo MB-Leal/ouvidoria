@@ -23,15 +23,15 @@ return new class extends Migration
             $table->string('assunto')->nullable();
             $table->text('descricao');
             $table->enum('status', [
-                'ABERTO', 
-                'EM_ANALISE', 
-                'RESPONDIDO', 
+                'ABERTO',
+                'EM_ANALISE',
+                'RESPONDIDO',
                 'FINALIZADO'
             ])->default('ABERTO');
             $table->enum('canal', [
-                'WEB', 
-                'EMAIL', 
-                'TELEFONE', 
+                'WEB',
+                'EMAIL',
+                'TELEFONE',
                 'PRESENCIAL',
                 'WHATSAPP'
             ])->default('WEB');
@@ -43,12 +43,12 @@ return new class extends Migration
             $table->timestamp('arquivado_em')->nullable();
             $table->text('motivo_arquivamento')->nullable();
             $table->timestamps();
-            
+
             $table->index('protocolo');
             $table->index('status');
             $table->timestamp('data_entrada')->nullable();
             $table->timestamp('data_registro_sistema')->nullable();
-            $table->timestamp('data_resposta')->nullable();
+            $table->date('data_resposta')->nullable();
             $table->enum('prioridade', ['baixa', 'media', 'alta', 'urgente'])->default('media');
             $table->string('setor_responsavel')->nullable();
             $table->json('tags')->nullable();

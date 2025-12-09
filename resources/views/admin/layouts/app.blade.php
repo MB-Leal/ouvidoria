@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,10 +10,10 @@
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Styles Admin -->
     <style>
         :root {
@@ -21,30 +22,30 @@
             --primary-color: #4e73df;
             --secondary-color: #858796;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fc;
         }
-        
+
         /* Navbar Admin */
         .navbar-admin {
             background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
             height: var(--navbar-height);
         }
-        
+
         .navbar-admin .navbar-brand {
             font-weight: 700;
             font-size: 1.25rem;
         }
-        
+
         /* Sidebar Admin */
         .sidebar-admin {
             width: var(--sidebar-width);
             min-height: calc(100vh - var(--navbar-height));
             background: #fff;
-            box-shadow: 0 0 15px rgba(0,0,0,.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, .1);
             position: fixed;
             top: var(--navbar-height);
             left: 0;
@@ -52,12 +53,12 @@
             transition: transform 0.3s ease;
             overflow-y: auto;
         }
-        
+
         /* Menu Sidebar */
         .sidebar-admin .nav-item {
             margin-bottom: 0.25rem;
         }
-        
+
         .sidebar-admin .nav-link {
             color: #6e707e;
             font-weight: 500;
@@ -65,25 +66,25 @@
             border-left: 3px solid transparent;
             transition: all 0.3s;
         }
-        
+
         .sidebar-admin .nav-link:hover {
             color: var(--primary-color);
             background-color: #f8f9fc;
         }
-        
+
         .sidebar-admin .nav-link.active {
             color: var(--primary-color);
             background-color: #f8f9fc;
             border-left-color: var(--primary-color);
         }
-        
+
         .sidebar-admin .nav-link i {
             width: 20px;
             text-align: center;
             margin-right: 10px;
             font-size: 0.9rem;
         }
-        
+
         /* Conteúdo Principal */
         .main-content-admin {
             margin-left: var(--sidebar-width);
@@ -91,22 +92,22 @@
             min-height: calc(100vh - var(--navbar-height));
             transition: margin-left 0.3s ease;
         }
-        
+
         /* Responsividade */
         @media (max-width: 991.98px) {
             .sidebar-admin {
                 transform: translateX(-100%);
             }
-            
+
             .sidebar-admin.show {
                 transform: translateX(0);
             }
-            
+
             .main-content-admin {
                 margin-left: 0;
                 padding: 1rem;
             }
-            
+
             /* Overlay para mobile */
             .sidebar-overlay {
                 position: fixed;
@@ -114,16 +115,16 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(0,0,0,0.5);
+                background: rgba(0, 0, 0, 0.5);
                 z-index: 99;
                 display: none;
             }
-            
+
             .sidebar-overlay.show {
                 display: block;
             }
         }
-        
+
         /* Cards Admin */
         .card-admin {
             border: none;
@@ -131,14 +132,14 @@
             border-radius: 0.35rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .card-header-admin {
             background-color: #fff;
             border-bottom: 1px solid #e3e6f0;
             padding: 1rem 1.35rem;
             border-radius: 0.35rem 0.35rem 0 0 !important;
         }
-        
+
         /* Botões Admin */
         .btn-admin-primary {
             background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
@@ -146,24 +147,24 @@
             color: white;
             font-weight: 500;
         }
-        
+
         .btn-admin-primary:hover {
             background: linear-gradient(135deg, #4263d1 0%, #1a3da3 100%);
             color: white;
         }
-        
+
         /* Breadcrumb Admin */
         .breadcrumb-admin {
             background-color: transparent;
             padding: 0.75rem 0;
             margin-bottom: 1rem;
         }
-        
+
         .breadcrumb-admin .breadcrumb-item.active {
             color: var(--primary-color);
             font-weight: 500;
         }
-        
+
         /* Tabelas Admin */
         .table-admin th {
             border-top: none;
@@ -172,11 +173,11 @@
             background-color: #f8f9fc;
             border-bottom: 1px solid #e3e6f0;
         }
-        
+
         .table-admin td {
             vertical-align: middle;
         }
-        
+
         /* Badges Admin */
         .badge-admin {
             font-weight: 500;
@@ -184,9 +185,10 @@
             font-size: 0.75em;
         }
     </style>
-    
+
     @stack('styles')
 </head>
+
 <body>
     <!-- Navbar Admin -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-admin">
@@ -195,18 +197,18 @@
             <button class="btn btn-link text-white sidebar-toggle d-lg-none me-2" id="sidebarToggle">
                 <i class="fas fa-bars fa-lg"></i>
             </button>
-            
+
             <!-- Logo/Marca -->
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
                 <i class="fas fa-comments me-2"></i>
                 <span class="d-none d-sm-inline">Ouvidoria Admin</span>
             </a>
-            
+
             <!-- Menu do Usuário -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" 
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user-circle me-1"></i>
                         <span class="d-none d-sm-inline">{{ Auth::user()->name ?? 'Admin' }}</span>
                     </a>
@@ -216,7 +218,9 @@
                                 <i class="fas fa-user me-2"></i> Meu Perfil
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <a class="dropdown-item" href="{{ route('home') }}" target="_blank">
                                 <i class="fas fa-external-link-alt me-2"></i> Site Público
@@ -245,31 +249,31 @@
             <!-- Menu de Navegação -->
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" 
-                       href="{{ route('admin.dashboard') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                        href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
                 </li>
-                
+
                 <!-- Menu Manifestações com Submenu -->
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.manifestacoes*') ? 'active' : '' }}"
-                       data-bs-toggle="collapse" href="#collapseManifestacoes" role="button">
+                        data-bs-toggle="collapse" href="#collapseManifestacoes" role="button">
                         <i class="fas fa-comments"></i> Manifestações
                         <i class="fas fa-chevron-down float-end mt-1"></i>
                     </a>
-                    <div class="collapse {{ request()->routeIs('admin.manifestacoes*') ? 'show' : '' }}" 
-                         id="collapseManifestacoes">
+                    <div class="collapse {{ request()->routeIs('admin.manifestacoes*') ? 'show' : '' }}"
+                        id="collapseManifestacoes">
                         <ul class="nav flex-column ms-4">
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.manifestacoes.index') ? 'active' : '' }}" 
-                                   href="{{ route('admin.manifestacoes.index') }}">
+                                <a class="nav-link {{ request()->routeIs('admin.manifestacoes.index') ? 'active' : '' }}"
+                                    href="{{ route('admin.manifestacoes.index') }}">
                                     <i class="fas fa-list"></i> Listar Todas
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.manifestacoes.create.manual') ? 'active' : '' }}" 
-                                   href="{{ route('admin.manifestacoes.create.manual') }}">
+                                <a class="nav-link {{ request()->routeIs('admin.manifestacoes.create.manual') ? 'active' : '' }}"
+                                    href="{{ route('admin.manifestacoes.create.manual') }}">
                                     <i class="fas fa-plus-circle"></i> Nova Manual
                                 </a>
                             </li>
@@ -286,26 +290,26 @@
                         </ul>
                     </div>
                 </li>
-                
+
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.tipos*') ? 'active' : '' }}" 
-                       href="{{ route('admin.tipos.index') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.tipos*') ? 'active' : '' }}"
+                        href="{{ route('admin.tipos.index') }}">
                         <i class="fas fa-tags"></i> Tipos
                     </a>
                 </li>
-                
+
                 @if(Auth::check() && Auth::user()->isAdmin())
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}" 
-                       href="{{ route('admin.users.index') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
+                        href="{{ route('admin.users.index') }}">
                         <i class="fas fa-users"></i> Usuários
                     </a>
                 </li>
                 @endif
-                
+
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.relatorios*') ? 'active' : '' }}" 
-                       href="{{ route('admin.relatorios.index') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.relatorios*') ? 'active' : '' }}"
+                        href="{{ route('admin.relatorios.index') }}">
                         <i class="fas fa-chart-line"></i> Relatórios
                     </a>
                 </li>
@@ -315,30 +319,41 @@
 
     <!-- Conteúdo Principal -->
     <main class="main-content-admin" id="mainContentAdmin">
+        @if (session('error'))
+        <div class="alert alert-danger" role="alert">
+            {{ session('error') }}
+        </div>
+        @endif
+
+        @if (session('success'))
+        <div class="alert alert-success" role="alert">
+            {{ session('success') }}
+        </div>
+        @endif
         <!-- Breadcrumb -->
         @hasSection('breadcrumb')
-            @yield('breadcrumb')
+        @yield('breadcrumb')
         @else
-            <nav aria-label="breadcrumb" class="breadcrumb-admin">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i></a></li>
-                    @yield('breadcrumb-items')
-                </ol>
-            </nav>
+        <nav aria-label="breadcrumb" class="breadcrumb-admin">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i></a></li>
+                @yield('breadcrumb-items')
+            </ol>
+        </nav>
         @endif
 
         <!-- Título da Página -->
         @hasSection('page-header')
-            @yield('page-header')
+        @yield('page-header')
         @else
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0 text-gray-800">
-                    @yield('page-title')
-                </h1>
-                @hasSection('page-actions')
-                    @yield('page-actions')
-                @endif
-            </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                @yield('page-title')
+            </h1>
+            @hasSection('page-actions')
+            @yield('page-actions')
+            @endif
+        </div>
         @endif
 
         <!-- Conteúdo -->
@@ -347,30 +362,30 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Scripts Admin -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('sidebarAdmin');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
-            
+
             // Toggle da Sidebar
             function toggleSidebar() {
                 sidebar.classList.toggle('show');
                 sidebarOverlay.classList.toggle('show');
                 document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
             }
-            
+
             // Event Listeners
             if (sidebarToggle) {
                 sidebarToggle.addEventListener('click', toggleSidebar);
             }
-            
+
             if (sidebarOverlay) {
                 sidebarOverlay.addEventListener('click', toggleSidebar);
             }
-            
+
             // Fechar sidebar ao clicar em um link (mobile)
             const sidebarLinks = sidebar.querySelectorAll('.nav-link');
             sidebarLinks.forEach(link => {
@@ -383,7 +398,7 @@
                     }
                 });
             });
-            
+
             // Auto-dismiss alerts
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
@@ -392,15 +407,16 @@
                     bsAlert.close();
                 });
             }, 5000);
-            
+
             // Ativar tooltips
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
     </script>
-    
+
     @stack('scripts')
 </body>
+
 </html>

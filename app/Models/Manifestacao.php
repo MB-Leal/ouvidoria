@@ -30,6 +30,7 @@ class Manifestacao extends Model
         'resposta',
         'respondido_em',
         'data_limite_resposta',
+        'data_resposta',
         'observacao_interna',
         'arquivado_em',
         'motivo_arquivamento'
@@ -42,6 +43,7 @@ class Manifestacao extends Model
         'respondido_em' => 'datetime',
         'arquivado_em' => 'datetime',
         'data_limite_resposta' => 'date',
+        'data_resposta' => 'datetime',
         'tags' => 'array',
     ];
 
