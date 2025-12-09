@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('nome');
             $table->string('email');
             $table->string('telefone')->nullable();
+            $table->boolean('sigilo_dados')->default(false);
+            $table->string('assunto')->nullable();
             $table->text('descricao');
             $table->enum('status', [
                 'ABERTO', 
@@ -44,6 +46,8 @@ return new class extends Migration
             
             $table->index('protocolo');
             $table->index('status');
+            $table->timestamp('data_entrada')->nullable();
+            $table->timestamp('data_registro_sistema')->nullable();
             $table->timestamp('data_resposta')->nullable();
             $table->enum('prioridade', ['baixa', 'media', 'alta', 'urgente'])->default('media');
             $table->string('setor_responsavel')->nullable();

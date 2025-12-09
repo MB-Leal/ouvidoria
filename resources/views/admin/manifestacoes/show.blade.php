@@ -30,10 +30,10 @@
 
     <!-- Mensagens de Sucesso/Erro -->
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     <div class="row">
@@ -45,12 +45,12 @@
                     <h6 class="m-0 font-weight-bold text-primary">Informações da Manifestação</h6>
                     <div>
                         @php
-                            $statusColors = [
-                                'ABERTO' => 'warning',
-                                'EM_ANALISE' => 'info',
-                                'RESPONDIDO' => 'success',
-                                'FINALIZADO' => 'secondary'
-                            ];
+                        $statusColors = [
+                        'ABERTO' => 'warning',
+                        'EM_ANALISE' => 'info',
+                        'RESPONDIDO' => 'success',
+                        'FINALIZADO' => 'secondary'
+                        ];
                         @endphp
                         <span class="badge bg-{{ $statusColors[$manifestacao->status] ?? 'secondary' }} fs-6">
                             {{ $manifestacao->status }}
@@ -75,14 +75,43 @@
                                 </div>
                             </div>
                         </div>
+                         <div class="col-md-6">
+        <div class="mb-3">
+            <label class="form-label text-muted small mb-1">Data de Entrada</label>
+            <div class="fs-5">
+                <strong>
+                    {{ $manifestacao->data_entrada?->format('d/m/Y H:i') ?? $manifestacao->created_at->format('d/m/Y H:i') }}
+                </strong>
+            </div>
+            <small class="text-muted">Data em que a manifestação chegou</small>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label class="form-label text-muted small mb-1">Data de Registro no Sistema</label>
+            <div class="fs-5">
+                <strong>
+                    {{ $manifestacao->data_registro_sistema?->format('d/m/Y H:i') ?? $manifestacao->created_at->format('d/m/Y H:i') }}
+                </strong>
+            </div>
+            <small class="text-muted">Data em que foi cadastrada no sistema</small>
+        </div>
+    </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-muted small mb-1">Título / Assunto</label>
                         <div class="fs-5">
-                            <strong>{{ $manifestacao->titulo ?? 'Sem título' }}</strong>
+                            <strong>{{ $manifestacao->assunto ?? 'Sem assunto' }}</strong>
                         </div>
                     </div>
+                    {{-- Exibir sigilo --}}
+                    @if($manifestacao->sigilo_dados)
+                    <div class="alert alert-info">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <strong>Sigilo Solicitado:</strong> O manifestante solicitou sigilo dos dados pessoais.
+                    </div>
+                    @endif
 
                     <div class="mb-4">
                         <label class="form-label text-muted small mb-1">Descrição Completa</label>
@@ -93,30 +122,30 @@
 
                     <!-- Anexo -->
                     @if($manifestacao->anexo_path)
-                        <div class="mb-4">
-                            <label class="form-label text-muted small mb-1">Anexo</label>
-                            <div>
-                                <a href="{{ asset('storage/' . $manifestacao->anexo_path) }}" 
-                                   target="_blank" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-paperclip me-1"></i> Visualizar Anexo
-                                </a>
-                            </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small mb-1">Anexo</label>
+                        <div>
+                            <a href="{{ asset('storage/' . $manifestacao->anexo_path) }}"
+                                target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-paperclip me-1"></i> Visualizar Anexo
+                            </a>
                         </div>
+                    </div>
                     @endif
 
                     <!-- Resposta (se houver) -->
                     @if($manifestacao->resposta)
-                        <div class="mt-4 pt-4 border-top">
-                            <label class="form-label text-muted small mb-1">Resposta da Ouvidoria</label>
-                            <div class="border rounded p-3 bg-light">
-                                {!! nl2br(e($manifestacao->resposta)) !!}
-                            </div>
-                            @if($manifestacao->respondido_em)
-                                <div class="text-end mt-2 text-muted small">
-                                    Respondido em: {{ $manifestacao->respondido_em->format('d/m/Y H:i') }}
-                                </div>
-                            @endif
+                    <div class="mt-4 pt-4 border-top">
+                        <label class="form-label text-muted small mb-1">Resposta da Ouvidoria</label>
+                        <div class="border rounded p-3 bg-light">
+                            {!! nl2br(e($manifestacao->resposta)) !!}
                         </div>
+                        @if($manifestacao->respondido_em)
+                        <div class="text-end mt-2 text-muted small">
+                            Respondido em: {{ $manifestacao->respondido_em->format('d/m/Y H:i') }}
+                        </div>
+                        @endif
+                    </div>
                     @endif
                 </div>
             </div>
@@ -134,12 +163,12 @@
                         <label class="form-label text-muted small mb-1">Status Atual</label>
                         <div>
                             @php
-                                $statusColors = [
-                                    'ABERTO' => 'warning',
-                                    'EM_ANALISE' => 'info',
-                                    'RESPONDIDO' => 'success',
-                                    'FINALIZADO' => 'secondary'
-                                ];
+                            $statusColors = [
+                            'ABERTO' => 'warning',
+                            'EM_ANALISE' => 'info',
+                            'RESPONDIDO' => 'success',
+                            'FINALIZADO' => 'secondary'
+                            ];
                             @endphp
                             <span class="badge bg-{{ $statusColors[$manifestacao->status] ?? 'secondary' }} fs-6 px-3 py-2">
                                 {{ $manifestacao->status }}
@@ -151,12 +180,12 @@
                         <label class="form-label text-muted small mb-1">Prioridade</label>
                         <div>
                             @php
-                                $prioridadeColors = [
-                                    'baixa' => 'success',
-                                    'media' => 'info',
-                                    'alta' => 'warning',
-                                    'urgente' => 'danger'
-                                ];
+                            $prioridadeColors = [
+                            'baixa' => 'success',
+                            'media' => 'info',
+                            'alta' => 'warning',
+                            'urgente' => 'danger'
+                            ];
                             @endphp
                             <span class="badge bg-{{ $prioridadeColors[$manifestacao->prioridade] ?? 'secondary' }}">
                                 {{ ucfirst($manifestacao->prioridade) }}
@@ -174,18 +203,18 @@
                     </div>
 
                     @if($manifestacao->data_limite_resposta)
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Prazo de Resposta</label>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-calendar-alt me-2 text-muted"></i>
-                                <strong class="{{ $manifestacao->data_limite_resposta < now() ? 'text-danger' : 'text-success' }}">
-                                    {{ $manifestacao->data_limite_resposta->format('d/m/Y') }}
-                                </strong>
-                                @if($manifestacao->data_limite_resposta < now() && $manifestacao->status != 'RESPONDIDO')
-                                    <span class="badge bg-danger ms-2">ATRASADO</span>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Prazo de Resposta</label>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-calendar-alt me-2 text-muted"></i>
+                            <strong class="{{ $manifestacao->data_limite_resposta < now() ? 'text-danger' : 'text-success' }}">
+                                {{ $manifestacao->data_limite_resposta->format('d/m/Y') }}
+                            </strong>
+                            @if($manifestacao->data_limite_resposta < now() && $manifestacao->status != 'RESPONDIDO')
+                                <span class="badge bg-danger ms-2">ATRASADO</span>
                                 @endif
-                            </div>
                         </div>
+                    </div>
                     @endif
                 </div>
             </div>
@@ -203,14 +232,14 @@
                             <span>{{ $manifestacao->nome ?? 'Anônimo' }}</span>
                         </div>
                         @if($manifestacao->email)
-                            <div class="text-muted small ms-4">
-                                <i class="fas fa-envelope me-1"></i> {{ $manifestacao->email }}
-                            </div>
+                        <div class="text-muted small ms-4">
+                            <i class="fas fa-envelope me-1"></i> {{ $manifestacao->email }}
+                        </div>
                         @endif
                         @if($manifestacao->telefone)
-                            <div class="text-muted small ms-4">
-                                <i class="fas fa-phone me-1"></i> {{ $manifestacao->telefone }}
-                            </div>
+                        <div class="text-muted small ms-4">
+                            <i class="fas fa-phone me-1"></i> {{ $manifestacao->telefone }}
+                        </div>
                         @endif
                     </div>
 
@@ -218,43 +247,43 @@
                         <label class="form-label text-muted small mb-1">Responsável Atual</label>
                         <div>
                             @if($manifestacao->responsavel)
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-user-check me-2 text-success"></i>
-                                    <div>
-                                        <strong>{{ $manifestacao->responsavel->name }}</strong>
-                                        <div class="text-muted small">{{ $manifestacao->responsavel->role }}</div>
-                                    </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-check me-2 text-success"></i>
+                                <div>
+                                    <strong>{{ $manifestacao->responsavel->name }}</strong>
+                                    <div class="text-muted small">{{ $manifestacao->responsavel->role }}</div>
                                 </div>
+                            </div>
                             @else
-                                <div class="text-muted">
-                                    <i class="fas fa-user-times me-2"></i> Não atribuído
-                                </div>
+                            <div class="text-muted">
+                                <i class="fas fa-user-times me-2"></i> Não atribuído
+                            </div>
                             @endif
                         </div>
                     </div>
 
                     <!-- Ações Rápidas -->
                     @if($manifestacao->status != 'FINALIZADO')
-                        <div class="mt-4 pt-3 border-top">
-                            <label class="form-label text-muted small mb-2">Ações Rápidas</label>
-                            <div class="d-grid gap-2">
-                                <!-- Atribuir -->
-                                @if(!$manifestacao->responsavel)
-                                    <button type="button" class="btn btn-outline-primary btn-sm" 
-                                            data-bs-toggle="modal" data-bs-target="#atribuirModal">
-                                        <i class="fas fa-user-check me-1"></i> Atribuir Responsável
-                                    </button>
-                                @endif
+                    <div class="mt-4 pt-3 border-top">
+                        <label class="form-label text-muted small mb-2">Ações Rápidas</label>
+                        <div class="d-grid gap-2">
+                            <!-- Atribuir -->
+                            @if(!$manifestacao->responsavel)
+                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#atribuirModal">
+                                <i class="fas fa-user-check me-1"></i> Atribuir Responsável
+                            </button>
+                            @endif
 
-                                <!-- Arquivar -->
-                                @if(!$manifestacao->arquivado_em)
-                                    <button type="button" class="btn btn-outline-danger btn-sm" 
-                                            data-bs-toggle="modal" data-bs-target="#arquivarModal">
-                                        <i class="fas fa-archive me-1"></i> Arquivar Manifestação
-                                    </button>
-                                @endif
-                            </div>
+                            <!-- Arquivar -->
+                            @if(!$manifestacao->arquivado_em)
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#arquivarModal">
+                                <i class="fas fa-archive me-1"></i> Arquivar Manifestação
+                            </button>
+                            @endif
                         </div>
+                    </div>
                     @endif
                 </div>
             </div>
@@ -266,44 +295,44 @@
                 </div>
                 <div class="card-body">
                     @if($manifestacao->setor_responsavel)
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Setor Responsável</label>
-                            <div>
-                                <i class="fas fa-building me-2 text-muted"></i>
-                                {{ $manifestacao->setor_responsavel }}
-                            </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Setor Responsável</label>
+                        <div>
+                            <i class="fas fa-building me-2 text-muted"></i>
+                            {{ $manifestacao->setor_responsavel }}
                         </div>
+                    </div>
                     @endif
 
                     @if($manifestacao->canal)
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Canal de Entrada</label>
-                            <div>
-                                <i class="fas fa-sign-in-alt me-2 text-muted"></i>
-                                {{ $manifestacao->canal }}
-                            </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Canal de Entrada</label>
+                        <div>
+                            <i class="fas fa-sign-in-alt me-2 text-muted"></i>
+                            {{ $manifestacao->canal }}
                         </div>
+                    </div>
                     @endif
 
                     @if($manifestacao->observacao_interna)
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Observações Internas</label>
-                            <div class="border rounded p-2 bg-light small">
-                                {!! nl2br(e($manifestacao->observacao_interna)) !!}
-                            </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Observações Internas</label>
+                        <div class="border rounded p-2 bg-light small">
+                            {!! nl2br(e($manifestacao->observacao_interna)) !!}
                         </div>
+                    </div>
                     @endif
 
                     @if($manifestacao->arquivado_em)
-                        <div class="alert alert-warning small">
-                            <i class="fas fa-archive me-1"></i>
-                            <strong>Arquivada em:</strong> {{ $manifestacao->arquivado_em->format('d/m/Y H:i') }}
-                            @if($manifestacao->motivo_arquivamento)
-                                <div class="mt-1">
-                                    <strong>Motivo:</strong> {{ $manifestacao->motivo_arquivamento }}
-                                </div>
-                            @endif
+                    <div class="alert alert-warning small">
+                        <i class="fas fa-archive me-1"></i>
+                        <strong>Arquivada em:</strong> {{ $manifestacao->arquivado_em->format('d/m/Y H:i') }}
+                        @if($manifestacao->motivo_arquivamento)
+                        <div class="mt-1">
+                            <strong>Motivo:</strong> {{ $manifestacao->motivo_arquivamento }}
                         </div>
+                        @endif
+                    </div>
                     @endif
                 </div>
             </div>
@@ -326,12 +355,12 @@
                     <select name="user_id" class="form-control" required>
                         <option value="">Selecione um responsável</option>
                         @php
-                            $responsaveis = \App\Models\User::where('ativo', true)->get();
+                        $responsaveis = \App\Models\User::where('ativo', true)->get();
                         @endphp
                         @foreach($responsaveis as $responsavel)
-                            <option value="{{ $responsavel->id }}">
-                                {{ $responsavel->name }} ({{ $responsavel->role }})
-                            </option>
+                        <option value="{{ $responsavel->id }}">
+                            {{ $responsavel->name }} ({{ $responsavel->role }})
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -358,8 +387,8 @@
                     <p>Tem certeza que deseja arquivar a manifestação <strong>#{{ $manifestacao->protocolo }}</strong>?</p>
                     <div class="mb-3">
                         <label for="motivo" class="form-label">Motivo do Arquivamento</label>
-                        <textarea name="motivo_arquivamento" class="form-control" 
-                                  rows="3" required placeholder="Informe o motivo..."></textarea>
+                        <textarea name="motivo_arquivamento" class="form-control"
+                            rows="3" required placeholder="Informe o motivo..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

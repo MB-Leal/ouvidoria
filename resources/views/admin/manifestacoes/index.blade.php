@@ -10,12 +10,12 @@
         </h1>
     </div>
     <div class="d-flex justify-content-end mb-4">
-    <a href="{{ route('admin.manifestacoes.create.manual') }}" class="btn btn-primary">
-        <i class="fas fa-plus-circle me-2"></i>
-        <span class="d-none d-sm-inline">Cadastrar Manualmente</span>
-        <span class="d-inline d-sm-none">Manual</span>
-    </a>
-</div>
+        <a href="{{ route('admin.manifestacoes.create.manual') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>
+            <span class="d-none d-sm-inline">Cadastrar Manualmente</span>
+            <span class="d-inline d-sm-none">Manual</span>
+        </a>
+    </div>
 
     <!-- Filtros -->
     <div class="card shadow mb-4">
@@ -125,6 +125,7 @@
                             <th class="d-none d-md-table-cell">Tipo</th>
                             <th>Status</th>
                             <th class="d-none d-sm-table-cell">Prioridade</th>
+                            <th class="d-none d-sm-table-cell">Sigilo</th>
                             <th class="d-none d-lg-table-cell">Responsável</th>
                             <th class="d-none d-md-table-cell">Data</th>
                             <th>Ações</th>
@@ -139,7 +140,7 @@
                             <td>
                                 <div class="d-flex flex-column">
                                     <strong class="text-dark text-truncate" style="max-width: 200px;">
-                                        {{ Str::limit($manifestacao->titulo ?? 'Sem título', 30) }}
+                                        {{ Str::limit($manifestacao->assunto ?? 'Sem assunto', 30) }}
                                     </strong>
                                     <small class="text-muted d-none d-sm-block">
                                         {{ Str::limit($manifestacao->descricao, 40) }}
@@ -187,6 +188,15 @@
                                 <span class="badge bg-{{ $prioridadeColors[$manifestacao->prioridade] ?? 'secondary' }}">
                                     {{ ucfirst($manifestacao->prioridade) }}
                                 </span>
+                            </td>
+                            <td class="d-none d-sm-table-cell">
+                                @if($manifestacao->sigilo_dados)
+                                <span class="badge bg-info" title="Sigilo solicitado">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span>
+                                @else
+                                <span class="text-muted">-</span>
+                                @endif
                             </td>
                             <td class="d-none d-lg-table-cell">
                                 @if($manifestacao->responsavel)

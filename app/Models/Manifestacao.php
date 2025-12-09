@@ -18,6 +18,8 @@ class Manifestacao extends Model
         'nome',
         'email',
         'telefone',
+        'sigilo_dados',
+        'assunto',
         'descricao',
         'status',
         'canal',
@@ -34,6 +36,9 @@ class Manifestacao extends Model
     ];
 
     protected $casts = [
+        'sigilo_dados' => 'boolean',
+        'data_entrada' => 'datetime',
+        'data_registro_sistema' => 'datetime',
         'respondido_em' => 'datetime',
         'arquivado_em' => 'datetime',
         'data_limite_resposta' => 'date',

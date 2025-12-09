@@ -50,8 +50,8 @@
                             <tr>
                                 <td class="fw-bold text-muted" width="40%">Tipo:</td>
                                 <td>
-                                    <span class="badge px-3 py-2" 
-                                          style="background-color: {{ $manifestacao->tipo->cor }}; color: white">
+                                    <span class="badge px-3 py-2"
+                                        style="background-color: {{ $manifestacao->tipo->cor }}; color: white">
                                         <i class="bi bi-tag me-1"></i>
                                         {{ $manifestacao->tipo->nome }}
                                     </span>
@@ -127,10 +127,10 @@
                                 <td class="fw-bold text-muted">Telefone:</td>
                                 <td>
                                     @if($manifestacao->telefone)
-                                        <i class="bi bi-telephone me-1"></i>
-                                        {{ $manifestacao->telefone }}
+                                    <i class="bi bi-telephone me-1"></i>
+                                    {{ $manifestacao->telefone }}
                                     @else
-                                        <span class="text-muted">Não informado</span>
+                                    <span class="text-muted">Não informado</span>
                                     @endif
                                 </td>
                             </tr>
@@ -172,9 +172,9 @@
                     <div class="flex-grow-1">
                         <h6>Arquivo anexado</h6>
                         <p class="text-muted mb-2">Documento enviado com a manifestação</p>
-                        <a href="{{ Storage::url($manifestacao->anexo_path) }}" 
-                           target="_blank" 
-                           class="btn btn-outline-primary">
+                        <a href="{{ Storage::url($manifestacao->anexo_path) }}"
+                            target="_blank"
+                            class="btn btn-outline-primary">
                             <i class="bi bi-eye me-1"></i> Visualizar Anexo
                         </a>
                     </div>
@@ -196,7 +196,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <span class="badge bg-success">
-                            Respondido em: {{ $manifestacao->respondido_em->format('d/m/Y H:i') }}
+                            Respondido em: {{ $manifestacao->data_resposta?->format('d/m/Y H:i') ?? 'Data não disponível' }}
                         </span>
                     </div>
                 </div>
@@ -245,7 +245,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="alert alert-light mt-3">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
@@ -286,16 +286,16 @@
         .no-print {
             display: none !important;
         }
-        
+
         .card {
             border: 1px solid #dee2e6 !important;
             box-shadow: none !important;
         }
-        
+
         .btn {
             display: none !important;
         }
-        
+
         body {
             font-size: 12pt;
         }

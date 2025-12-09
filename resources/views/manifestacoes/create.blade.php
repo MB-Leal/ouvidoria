@@ -8,14 +8,14 @@
         <div class="card card-faspm">
             <div class="card-header bg-faspm text-white">
                 <h4 class="mb-0">
-                    <i class="bi bi-chat-left-text me-2"></i> 
+                    <i class="bi bi-chat-left-text me-2"></i>
                     Nova Manifestação
                 </h4>
             </div>
             <div class="card-body">
                 <form action="{{ route('manifestacoes.store') }}" method="POST" enctype="multipart/form-data" id="form-manifestacao">
                     @csrf
-                    
+
                     <div class="row">
                         <!-- Coluna esquerda -->
                         <div class="col-md-6">
@@ -23,20 +23,20 @@
                                 <label class="form-label fw-bold text-primary">
                                     <i class="bi bi-tag me-1"></i> Tipo de Manifestação *
                                 </label>
-                                <select class="form-select @error('tipo_manifestacao_id') is-invalid @enderror" 
-                                        name="tipo_manifestacao_id" required>
+                                <select class="form-select @error('tipo_manifestacao_id') is-invalid @enderror"
+                                    name="tipo_manifestacao_id" required>
                                     <option value="">Selecione o tipo...</option>
                                     @foreach($tipos as $tipo)
-                                    <option value="{{ $tipo->id }}" 
-                                            {{ old('tipo_manifestacao_id') == $tipo->id ? 'selected' : '' }}
-                                            data-cor="{{ $tipo->cor }}"
-                                            data-prazo="{{ $tipo->prazo_dias }}">
+                                    <option value="{{ $tipo->id }}"
+                                        {{ old('tipo_manifestacao_id') == $tipo->id ? 'selected' : '' }}
+                                        data-cor="{{ $tipo->cor }}"
+                                        data-prazo="{{ $tipo->prazo_dias }}">
                                         {{ $tipo->nome }}
                                     </option>
                                     @endforeach
                                 </select>
                                 @error('tipo_manifestacao_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                                 <small class="text-muted">Escolha o tipo de manifestação mais adequado</small>
                             </div>
@@ -45,59 +45,134 @@
                                 <label class="form-label fw-bold text-primary">
                                     <i class="bi bi-person me-1"></i> Dados Pessoais
                                 </label>
-                                
+
                                 <div class="mb-3">
-                                    <input type="text" 
-                                           class="form-control @error('nome') is-invalid @enderror" 
-                                           name="nome" 
-                                           value="{{ old('nome') }}"
-                                           placeholder="Nome completo *" 
-                                           required>
+                                    <input type="text"
+                                        class="form-control @error('nome') is-invalid @enderror"
+                                        name="nome"
+                                        value="{{ old('nome') }}"
+                                        placeholder="Nome completo *"
+                                        required>
                                     @error('nome')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
                                 <div class="mb-3">
-                                    <input type="email" 
-                                           class="form-control @error('email') is-invalid @enderror" 
-                                           name="email" 
-                                           value="{{ old('email') }}"
-                                           placeholder="E-mail *" 
-                                           required>
+                                    <input type="email"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        name="email"
+                                        value="{{ old('email') }}"
+                                        placeholder="E-mail *"
+                                        required>
                                     @error('email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
                                 <div class="mb-3">
-                                    <input type="text" 
-                                           class="form-control @error('telefone') is-invalid @enderror" 
-                                           name="telefone" 
-                                           value="{{ old('telefone') }}"
-                                           placeholder="Telefone (opcional)"
-                                           oninput="mascaraTelefone(this)">
+                                    <input type="text"
+                                        class="form-control @error('telefone') is-invalid @enderror"
+                                        name="telefone"
+                                        value="{{ old('telefone') }}"
+                                        placeholder="Telefone (opcional)"
+                                        oninput="mascaraTelefone(this)">
                                     @error('telefone')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <small class="text-muted">Formato: (91) 99999-9999</small>
                                 </div>
                             </div>
+
+                            {{-- Campo Sigilo dos Dados (DEPOIS dos dados pessoais) --}}
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-shield-alt me-2"></i> Sigilo dos Dados Pessoais
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Informação Importante:</strong> De acordo com a Lei de Acesso à Informação (Lei nº 12.527/2011),
+                                        seus dados pessoais são protegidos. Marcar "Sim" indica que você não autoriza a divulgação pública
+                                        de suas informações pessoais em relatórios ou respostas públicas.
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">
+                                            <strong>Deseja que seus dados pessoais tenham sigilo?</strong>
+                                        </label>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input"
+                                                type="radio"
+                                                name="sigilo_dados"
+                                                id="sigilo_sim"
+                                                value="1"
+                                                {{ old('sigilo_dados') == '1' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="sigilo_sim">
+                                                 Sim, quero sigilo
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input"
+                                                type="radio"
+                                                name="sigilo_dados"
+                                                id="sigilo_nao"
+                                                value="0"
+                                                {{ old('sigilo_dados', '0') == '0' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="sigilo_nao">
+                                                 Não precisa de sigilo
+                                            </label>
+                                        </div>
+
+                                        @error('sigilo_dados')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="alert alert-warning small mb-0">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Observação:</strong> Mesmo com sigilo, seus dados serão acessíveis aos responsáveis
+                                        pela análise da manifestação para fins de resposta e acompanhamento.
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
 
                         <!-- Coluna direita -->
                         <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="assunto" class="form-label">
+                                    Assunto da Manifestação <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                    class="form-control @error('assunto') is-invalid @enderror"
+                                    id="assunto"
+                                    name="assunto"
+                                    value="{{ old('assunto') }}"
+                                    required
+                                    placeholder="Resumo do que se trata a manifestação">
+                                @error('assunto')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Descreva brevemente o assunto (ex: "Problema com atendimento", "Elogio ao servidor", etc.)</small>
+                            </div>
                             <div class="mb-4">
                                 <label class="form-label fw-bold text-primary">
                                     <i class="bi bi-chat-square-text me-1"></i> Descrição da Manifestação *
                                 </label>
-                                <textarea class="form-control @error('descricao') is-invalid @enderror" 
-                                          name="descricao" 
-                                          rows="8" 
-                                          placeholder="Descreva sua manifestação de forma clara e objetiva. Seja específico sobre fatos, datas, pessoas envolvidas e o que você espera como resultado."
-                                          required>{{ old('descricao') }}</textarea>
+                                <textarea class="form-control @error('descricao') is-invalid @enderror"
+                                    name="descricao"
+                                    rows="8"
+                                    placeholder="Descreva sua manifestação de forma clara e objetiva. Seja específico sobre fatos, datas, pessoas envolvidas e o que você espera como resultado."
+                                    required>{{ old('descricao') }}</textarea>
                                 @error('descricao')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                                 <div class="mt-2 text-end">
                                     <small class="text-muted">Mínimo 10 caracteres</small>
@@ -108,12 +183,12 @@
                                 <label class="form-label fw-bold text-primary">
                                     <i class="bi bi-paperclip me-1"></i> Anexos (Opcional)
                                 </label>
-                                <input type="file" 
-                                       class="form-control @error('anexo') is-invalid @enderror" 
-                                       name="anexo" 
-                                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                <input type="file"
+                                    class="form-control @error('anexo') is-invalid @enderror"
+                                    name="anexo"
+                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                                 @error('anexo')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                                 <div class="mt-2">
                                     <small class="text-muted">
@@ -140,7 +215,7 @@
                                     <li>Todas as informações serão tratadas com <strong>sigilo</strong></li>
                                 </ul>
                                 <div id="info-prazo" class="mt-2" style="display: none;">
-                                    <strong>Prazo estimado para resposta:</strong> 
+                                    <strong>Prazo estimado para resposta:</strong>
                                     <span id="prazo-dias" class="badge bg-primary"></span> dias úteis
                                 </div>
                             </div>
@@ -174,7 +249,7 @@
         const prazo = selectedOption.getAttribute('data-prazo');
         const infoPrazo = document.getElementById('info-prazo');
         const prazoDias = document.getElementById('prazo-dias');
-        
+
         if (prazo) {
             prazoDias.textContent = prazo;
             infoPrazo.style.display = 'block';
@@ -186,11 +261,11 @@
     // Máscara para telefone
     function mascaraTelefone(input) {
         let value = input.value.replace(/\D/g, '');
-        
+
         if (value.length > 11) {
             value = value.substring(0, 11);
         }
-        
+
         if (value.length > 10) {
             value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
         } else if (value.length > 6) {
@@ -200,7 +275,7 @@
         } else if (value.length > 0) {
             value = value.replace(/^(\d*)/, '($1');
         }
-        
+
         input.value = value;
     }
 
@@ -217,7 +292,7 @@
         const minLength = 10;
         const currentLength = this.value.length;
         const feedback = document.querySelector('.text-muted:last-of-type');
-        
+
         if (feedback) {
             if (currentLength < minLength) {
                 feedback.innerHTML = `<span class="text-danger">Faltam ${minLength - currentLength} caracteres</span>`;

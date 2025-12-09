@@ -36,10 +36,10 @@ Route::prefix('manifestacoes')->name('manifestacoes.')->group(function () {
 */
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     /*
     |--------------------------------------------------------------------------
     | Gestão de Manifestações (Admin)
@@ -47,29 +47,29 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     */
     Route::prefix('manifestacoes')->name('manifestacoes.')->group(function () {
         Route::get('/', [AdminManifestacaoController::class, 'index'])->name('index');
+        Route::get('/nova-manual', [AdminManifestacaoController::class, 'createManual'])->name('create.manual');
+        Route::post('/salvar-manual', [AdminManifestacaoController::class, 'storeManual'])->name('store.manual');
         Route::get('/{manifestacao}', [AdminManifestacaoController::class, 'show'])->name('show');
         Route::get('/{manifestacao}/edit', [AdminManifestacaoController::class, 'edit'])->name('edit');
         Route::put('/{manifestacao}', [AdminManifestacaoController::class, 'update'])->name('update');
         Route::post('/{manifestacao}/atribuir', [AdminManifestacaoController::class, 'atribuir'])->name('atribuir');
         Route::post('/{manifestacao}/arquivar', [AdminManifestacaoController::class, 'arquivar'])->name('arquivar');
-        Route::get('/nova-manual', [AdminManifestacaoController::class, 'createManual'])->name('create.manual');
-        Route::post('/salvar-manual', [AdminManifestacaoController::class, 'storeManual'])->name('store.manual');
     });
-    
+
     /*
     |--------------------------------------------------------------------------
     | Gestão de Usuários
     |--------------------------------------------------------------------------
     */
     Route::resource('users', UserController::class)->except(['show']);
-    
+
     /*
     |--------------------------------------------------------------------------
     | Gestão de Tipos de Manifestação (CRUD)
     |--------------------------------------------------------------------------
     */
     Route::resource('tipos', TipoManifestacaoController::class)->except(['show']);
-    
+
     /*
     |--------------------------------------------------------------------------
     | Relatórios

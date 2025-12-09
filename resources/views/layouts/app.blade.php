@@ -160,9 +160,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('home') ? 'active fw-bold' : '' }} text-white" 
-                           href="{{ route('home') }}">
-                            <i class="bi bi-plus-circle me-1"></i> Nova Manifestação Teste
+                        <a class="nav-link {{ request()->routeIs('manifestacoes.create') ? 'active fw-bold' : '' }} text-white" 
+                           href="{{ route('manifestacoes.create') }}">
+                            <i class="bi bi-plus-circle me-1"></i> Nova Manifestação
                         </a>
                     </li>
                     <li class="nav-item">

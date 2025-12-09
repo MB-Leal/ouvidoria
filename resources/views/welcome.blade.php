@@ -12,7 +12,7 @@
                     Ouvidoria FASPM/PA
                 </h1>
                 <p class="lead mb-4">
-                    Seu canal direto com a Fundação de Apoio à Saúde do Pará. 
+                    Seu canal direto com o Fundo de Assistência Social da Polícia Militar do Pará. 
                     Aqui você pode registrar reclamações, elogios, sugestões e denúncias.
                 </p>
                 <div class="d-flex flex-column flex-md-row justify-content-center gap-3">

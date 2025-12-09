@@ -25,7 +25,9 @@ class ManifestacaoController extends Controller
             'nome' => 'required|string|max:255',
             'email' => 'required|email',
             'telefone' => 'nullable|string',
+            'assunto' => 'required|string|max:255',
             'descricao' => 'required|string|min:10',
+            'sigilo_dados' => 'boolean',
             'anexo' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,doc,docx',
         ]);
 
@@ -39,7 +41,9 @@ class ManifestacaoController extends Controller
             'nome' => $validated['nome'],
             'email' => $validated['email'],
             'telefone' => $validated['telefone'],
+            'assunto' => $validated['assunto'],
             'descricao' => $validated['descricao'],
+            'sigilo_dados' => $request->boolean('sigilo_dados'),
             'status' => 'ABERTO',
             'canal' => 'WEB'
         ]);
