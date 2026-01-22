@@ -18,10 +18,9 @@ class ManifestacaoController extends Controller
 
     public function index(Request $request)
     {
-        $user = auth()->user();
         $query = Manifestacao::with(['tipo', 'responsavel'])->latest();
 
-        // Filtros
+        // Filtros mantidos para busca, mas sem restrição de visibilidade por usuário
         if ($request->filled('protocolo')) {
             $query->where('protocolo', 'like', '%' . $request->protocolo . '%');
         }
@@ -38,13 +37,7 @@ class ManifestacaoController extends Controller
             $query->where('user_id', $request->responsavel);
         }
 
-        // Se não for admin, mostrar apenas atribuídas ou sem responsável
-        if (!$user->isAdmin()) {
-            $query->where(function ($q) use ($user) {
-                $q->where('user_id', $user->id)
-                    ->orWhereNull('user_id');
-            });
-        }
+        // REMOVIDO: O bloco que restringia a visualização para não-admins
 
         $manifestacoes = $query->paginate(20);
         $responsaveis = User::where('ativo', true)->get();
@@ -73,30 +66,16 @@ class ManifestacaoController extends Controller
 
     public function show(Manifestacao $manifestacao)
     {
-        $user = auth()->user();
-
-        // Verificar permissão
-        if (!$user->isAdmin() && $manifestacao->user_id && $manifestacao->user_id !== $user->id) {
-            abort(403, 'Acesso não autorizado');
-        }
-
+        // REMOVIDO: Verificação de permissão. Todos podem visualizar.
         $manifestacao->load(['tipo', 'responsavel']);
         return view('admin.manifestacoes.show', compact('manifestacao'));
     }
 
     public function edit(Manifestacao $manifestacao)
     {
-        $user = auth()->user();
-
-        // Verificar permissão para editar
-        if (
-            !$user->isAdmin() &&
-            ($manifestacao->user_id !== $user->id ||
-                ($user->isSecretario() && $manifestacao->status === 'RESPONDIDO'))
-        ) {
-            abort(403, 'Acesso não autorizado');
-        }
-
+        // REMOVIDO: Bloqueio de edição por usuário ou status. 
+        // A equipe agora tem autonomia total para correções.
+        
         $manifestacao->load(['tipo', 'responsavel']);
         $responsaveis = User::where('ativo', true)->get();
 
@@ -124,17 +103,6 @@ class ManifestacaoController extends Controller
 
     public function update(Request $request, Manifestacao $manifestacao)
     {
-        $user = auth()->user();
-
-        // Verificar permissão para editar
-        if (
-            !$user->isAdmin() &&
-            ($manifestacao->user_id !== $user->id ||
-                ($user->isSecretario() && $manifestacao->status === 'RESPONDIDO'))
-        ) {
-            abort(403, 'Acesso não autorizado');
-        }
-
         $validated = $request->validate([
             'status' => 'required|in:ABERTO,EM_ANALISE,RESPONDIDO,FINALIZADO',
             'prioridade' => 'required|in:baixa,media,alta,urgente',
@@ -146,7 +114,9 @@ class ManifestacaoController extends Controller
             'data_resposta' => 'nullable|date',
         ]);
 
-        // Se está respondendo, registrar data
+        // Registrar quem está atualizando (Rastreabilidade)
+        $validated['updated_by'] = auth()->id();
+
         if ($validated['status'] == 'RESPONDIDO' && $manifestacao->status != 'RESPONDIDO') {
             $validated['data_resposta'] = now();
         }
@@ -159,54 +129,46 @@ class ManifestacaoController extends Controller
 
     public function atribuir(Request $request, Manifestacao $manifestacao)
     {
-        $user = auth()->user();
-
-        // Apenas admin e ouvidor podem atribuir
-        if (!$user->isAdmin() && !$user->isOuvidor()) {
-            abort(403, 'Acesso não autorizado');
-        }
-
+        // Embora você queira eliminar a obrigatoriedade, mantive a função 
+        // caso queiram designar um "ponto focal" no formulário sem travar o acesso.
         $request->validate([
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $manifestacao->update(['user_id' => $request->user_id]);
+        $manifestacao->update([
+            'user_id' => $request->user_id,
+            'updated_by' => auth()->id()
+        ]);
 
-        return back()->with('success', 'Manifestação atribuída com sucesso!');
+        return back()->with('success', 'Responsável definido com sucesso!');
     }
 
     public function arquivar(Request $request, Manifestacao $manifestacao)
     {
-        $user = auth()->user();
-
-        // Apenas admin e ouvidor podem arquivar
-        if (!$user->isAdmin() && !$user->isOuvidor()) {
-            abort(403, 'Acesso não autorizado');
-        }
-
         $request->validate([
             'motivo_arquivamento' => 'required|string',
         ]);
 
         $manifestacao->update([
             'arquivado_em' => now(),
+            'archived_by' => auth()->id(), // Registra quem arquivou
             'motivo_arquivamento' => $request->motivo_arquivamento,
-            'status' => 'FINALIZADO'
+            'status' => 'FINALIZADO',
+            'updated_by' => auth()->id()
         ]);
 
         return back()->with('success', 'Manifestação arquivada com sucesso!');
     }
+
     public function createManual()
     {
         $tipos = \App\Models\TipoManifestacao::where('ativo', true)->get();
-
         $statuses = [
             'ABERTO' => 'Aberto',
             'EM_ANALISE' => 'Em Análise',
             'RESPONDIDO' => 'Respondido',
             'FINALIZADO' => 'Finalizado'
         ];
-
         $canais = [
             'PRESENCIAL' => 'Presencial',
             'EMAIL' => 'E-mail',
@@ -217,9 +179,6 @@ class ManifestacaoController extends Controller
         return view('admin.manifestacoes.create-manual', compact('tipos', 'statuses', 'canais'));
     }
 
-    /**
-     * Salva uma manifestação cadastrada manualmente
-     */
     public function storeManual(Request $request)
     {
         $validated = $request->validate([
@@ -240,38 +199,23 @@ class ManifestacaoController extends Controller
             'data_registro_sistema' => 'nullable|date',
         ]);
 
-        // Gerar protocolo
         $protocolo = ProtocoloService::gerarProtocolo();
 
-        // Preparar dados
         $dadosManifestacao = [
-            'protocolo' => $protocolo,
-            'tipo_manifestacao_id' => $validated['tipo_manifestacao_id'],
-            'canal' => $validated['canal'],
-            'status' => $validated['status'],
-            'assunto' => $validated['assunto'],
-            'descricao' => $validated['descricao'],
-            'sigilo_dados' => $request->boolean('sigilo_dados'),
-            'prioridade' => $validated['prioridade'],
-            'observacao_interna' => $validated['observacao_interna'] ?? null,
-            'data_entrada' => now(),
-            'data_registro_sistema' => now(),
-        ];
+    'protocolo' => $protocolo,
+    'tipo_manifestacao_id' => $validated['tipo_manifestacao_id'],
+    'canal' => $validated['canal'],
+    'status' => $validated['status'],
+    'assunto' => $validated['assunto'],
+    'descricao' => $validated['descricao'],
+    'sigilo_dados' => $request->boolean('sigilo_dados'),
+    'prioridade' => $validated['prioridade'],
+    'observacao_interna' => $validated['observacao_interna'] ?? null,
+    'data_entrada' => $request->data_entrada ?? now(),
+    'data_registro_sistema' => $request->data_registro_sistema ?? now(),
+    'user_id' => auth()->id(), // Usamos user_id para registrar quem criou manualmente
+];
 
-        // Processar datas
-        if ($request->filled('data_entrada')) {
-            $dadosManifestacao['data_entrada'] = $request->data_entrada;
-        } else {
-            $dadosManifestacao['data_entrada'] = now(); // Se não informada, usa data atual
-        }
-
-        if ($request->filled('data_registro_sistema')) {
-            $dadosManifestacao['data_registro_sistema'] = $request->data_registro_sistema;
-        } else {
-            $dadosManifestacao['data_registro_sistema'] = now(); // Data do registro no sistema
-        }
-
-        // Se for anônimo
         if ($request->boolean('anonimo')) {
             $dadosManifestacao['nome'] = $request->nome;
             $dadosManifestacao['email'] = $request->email;
@@ -282,24 +226,14 @@ class ManifestacaoController extends Controller
             $dadosManifestacao['telefone'] = $validated['telefone'] ?? null;
         }
 
-        // Se já for respondido, registrar data
         if ($validated['status'] == 'RESPONDIDO') {
-            $dadosManifestacao['respondido_em'] = now();
             $dadosManifestacao['data_resposta'] = now();
         }
 
-        // Atribuir ao usuário logado se for ouvidor/secretário
-        $user = auth()->user();
-        if (in_array($user->role, ['ouvidor', 'secretario'])) {
-            $dadosManifestacao['user_id'] = $user->id;
-        }
-
         DB::beginTransaction();
-
         try {
             $manifestacao = Manifestacao::create($dadosManifestacao);
 
-            // Processar anexo
             if ($request->hasFile('anexo')) {
                 $path = $request->file('anexo')->store('anexos', 'public');
                 $manifestacao->update(['anexo_path' => $path]);
@@ -308,10 +242,10 @@ class ManifestacaoController extends Controller
             DB::commit();
 
             return redirect()->route('admin.manifestacoes.show', $manifestacao)
-                ->with('success', 'Manifestação cadastrada manualmente com sucesso! Protocolo: ' . $protocolo);
+                ->with('success', 'Protocolo: ' . $protocolo);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Erro ao cadastrar manifestação: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Erro: ' . $e->getMessage()]);
         }
     }
 }

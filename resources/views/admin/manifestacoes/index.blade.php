@@ -120,114 +120,44 @@
                 <table class="table table-hover table-sm" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th class="d-none d-md-table-cell">Protocolo</th>
-                            <th>Título</th>
-                            <th class="d-none d-md-table-cell">Tipo</th>
+                            <th>Protocolo</th>
+                            <th>Tipo</th>
                             <th>Status</th>
-                            <th class="d-none d-sm-table-cell">Prioridade</th>
-                            <th class="d-none d-sm-table-cell">Sigilo</th>
-                            <th class="d-none d-lg-table-cell">Responsável</th>
-                            <th class="d-none d-md-table-cell">Data</th>
+                            <th>Vencimento</th> {{-- Substituindo Responsável --}}
+                            <th>Último Editor</th> {{-- Nova coluna de auditoria --}}
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($manifestacoes as $manifestacao)
                         <tr>
-                            <td class="d-none d-md-table-cell">
-                                <strong class="text-primary">#{{ $manifestacao->protocolo }}</strong>
-                            </td>
+                            <td><strong>{{ $manifestacao->protocolo }}</strong></td>
                             <td>
-                                <div class="d-flex flex-column">
-                                    <strong class="text-dark text-truncate" style="max-width: 200px;">
-                                        {{ Str::limit($manifestacao->assunto ?? 'Sem assunto', 30) }}
-                                    </strong>
-                                    <small class="text-muted d-none d-sm-block">
-                                        {{ Str::limit($manifestacao->descricao, 40) }}
-                                    </small>
-                                    <small class="text-muted d-block d-sm-none">
-                                        #{{ $manifestacao->protocolo }}
-                                    </small>
-                                </div>
-                            </td>
-                            <td class="d-none d-md-table-cell">
-                                <span class="badge d-none-mobile"
-                                    style="background-color: {{ $manifestacao->tipo->cor ?? '#6c757d' }}; color: white;">
-                                    {{ $manifestacao->tipo->nome ?? 'Não informado' }}
+                                <span class="badge" style="background-color: {{ $manifestacao->tipo->cor }}">
+                                    {{ $manifestacao->tipo->nome }}
                                 </span>
                             </td>
                             <td>
-                                @php
-                                $statusColors = [
-                                'ABERTO' => 'warning',
-                                'EM_ANALISE' => 'info',
-                                'RESPONDIDO' => 'success',
-                                'FINALIZADO' => 'secondary'
-                                ];
-                                @endphp
-                                <span class="badge bg-{{ $statusColors[$manifestacao->status] ?? 'secondary' }}">
-                                    <span class="d-none d-sm-inline">{{ $manifestacao->status }}</span>
-                                    <span class="d-inline d-sm-none">
-                                        @if($manifestacao->status == 'ABERTO') <i class="fas fa-clock"></i>
-                                        @elseif($manifestacao->status == 'EM_ANALISE') <i class="fas fa-search"></i>
-                                        @elseif($manifestacao->status == 'RESPONDIDO') <i class="fas fa-check"></i>
-                                        @else <i class="fas fa-archive"></i>
-                                        @endif
-                                    </span>
+                                <span class="badge bg-{{ $manifestacao->status_cor }}">
+                                    {{ $manifestacao->status_formatado }}
                                 </span>
                             </td>
-                            <td class="d-none d-sm-table-cell">
-                                @php
-                                $prioridadeColors = [
-                                'baixa' => 'success',
-                                'media' => 'info',
-                                'alta' => 'warning',
-                                'urgente' => 'danger'
-                                ];
-                                @endphp
-                                <span class="badge bg-{{ $prioridadeColors[$manifestacao->prioridade] ?? 'secondary' }}">
-                                    {{ ucfirst($manifestacao->prioridade) }}
-                                </span>
-                            </td>
-                            <td class="d-none d-sm-table-cell">
-                                @if($manifestacao->sigilo_dados)
-                                <span class="badge bg-info" title="Sigilo solicitado">
-                                    <i class="fas fa-shield-alt"></i>
-                                </span>
-                                @else
-                                <span class="text-muted">-</span>
+                            <td>
+                                @if($manifestacao->data_limite_resposta)
+                                <small class="{{ $manifestacao->dias_restantes < 0 ? 'text-danger fw-bold' : '' }}">
+                                    {{ $manifestacao->data_limite_resposta->format('d/m/Y') }}
+                                </small>
                                 @endif
                             </td>
-                            <td class="d-none d-lg-table-cell">
-                                @if($manifestacao->responsavel)
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-user-circle me-2 text-muted d-none d-xl-inline"></i>
-                                    <span class="text-truncate" style="max-width: 120px;">
-                                        {{ $manifestacao->responsavel->name }}
-                                    </span>
-                                </div>
-                                @else
-                                <span class="text-muted">-</span>
-                                @endif
-                            </td>
-                            <td class="d-none d-md-table-cell">
-                                <div class="d-flex flex-column">
-                                    <small>{{ $manifestacao->created_at->format('d/m/Y') }}</small>
-                                    <small class="text-muted">{{ $manifestacao->created_at->format('H:i') }}</small>
-                                </div>
+                            <td>
+                                <small class="text-muted italic">
+                                    {{ explode(' ', $manifestacao->editor->name)[0] }}
+                                </small>
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{{ route('admin.manifestacoes.show', $manifestacao) }}"
-                                        class="btn btn-info" title="Visualizar">
-                                        <i class="fas fa-eye"></i>
-                                        <span class="d-none d-lg-inline ms-1">Ver</span>
-                                    </a>
-                                    <a href="{{ route('admin.manifestacoes.edit', $manifestacao) }}"
-                                        class="btn btn-warning" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                        <span class="d-none d-lg-inline ms-1">Editar</span>
-                                    </a>
+                                <div class="btn-group">
+                                    <a href="{{ route('admin.manifestacoes.show', $manifestacao) }}" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('admin.manifestacoes.edit', $manifestacao) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
                                 </div>
                             </td>
                         </tr>

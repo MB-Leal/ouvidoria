@@ -75,28 +75,28 @@
                                 </div>
                             </div>
                         </div>
-                         <div class="col-md-6">
-        <div class="mb-3">
-            <label class="form-label text-muted small mb-1">Data de Entrada</label>
-            <div class="fs-5">
-                <strong>
-                    {{ $manifestacao->data_entrada?->format('d/m/Y H:i') ?? $manifestacao->created_at->format('d/m/Y H:i') }}
-                </strong>
-            </div>
-            <small class="text-muted">Data em que a manifestação chegou</small>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="mb-3">
-            <label class="form-label text-muted small mb-1">Data de Registro no Sistema</label>
-            <div class="fs-5">
-                <strong>
-                    {{ $manifestacao->data_registro_sistema?->format('d/m/Y H:i') ?? $manifestacao->created_at->format('d/m/Y H:i') }}
-                </strong>
-            </div>
-            <small class="text-muted">Data em que foi cadastrada no sistema</small>
-        </div>
-    </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small mb-1">Data de Entrada</label>
+                                <div class="fs-5">
+                                    <strong>
+                                        {{ $manifestacao->data_entrada?->format('d/m/Y H:i') ?? $manifestacao->created_at->format('d/m/Y H:i') }}
+                                    </strong>
+                                </div>
+                                <small class="text-muted">Data em que a manifestação chegou</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small mb-1">Data de Registro no Sistema</label>
+                                <div class="fs-5">
+                                    <strong>
+                                        {{ $manifestacao->data_registro_sistema?->format('d/m/Y H:i') ?? $manifestacao->created_at->format('d/m/Y H:i') }}
+                                    </strong>
+                                </div>
+                                <small class="text-muted">Data em que foi cadastrada no sistema</small>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mb-4">
@@ -145,6 +145,24 @@
                             Respondido em: {{ $manifestacao->respondido_em->format('d/m/Y H:i') }}
                         </div>
                         @endif
+                    </div>
+                    @endif
+                </div>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="row text-center small">
+                    <div class="col-md-4">
+                        <span class="text-muted">Registado por:</span><br>
+                        <strong>{{ $manifestacao->responsavel->name }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted">Última Atualização:</span><br>
+                        <strong>{{ $manifestacao->editor->name }}</strong> ({{ $manifestacao->updated_at->format('d/m/Y H:i') }})
+                    </div>
+                    @if($manifestacao->arquivado_em)
+                    <div class="col-md-4 text-danger">
+                        <span class="text-muted">Arquivado por:</span><br>
+                        <strong>{{ $manifestacao->arquivador->name }}</strong>
                     </div>
                     @endif
                 </div>
@@ -396,6 +414,39 @@
                     <button type="submit" class="btn btn-danger">Confirmar Arquivamento</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3 bg-light">
+        <h6 class="m-0 font-weight-bold text-primary">Controlo de Atendimento</h6>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-md-3 border-end">
+                <p class="text-muted small mb-1">Criado em</p>
+                <h6>{{ $manifestacao->created_at->format('d/m/Y H:i') }}</h6>
+            </div>
+            <div class="col-md-3 border-end">
+                <p class="text-muted small mb-1">Última Edição</p>
+                <h6>{{ $manifestacao->editor->name ?? 'Nenhuma alteração' }}</h6>
+            </div>
+            <div class="col-md-3 border-end">
+                <p class="text-muted small mb-1">Data Limite</p>
+                <h6 class="{{ $manifestacao->dias_restantes < 0 ? 'text-danger' : 'text-success' }}">
+                    {{ $manifestacao->data_limite_resposta ? $manifestacao->data_limite_resposta->format('d/m/Y') : 'Não definida' }}
+                </h6>
+            </div>
+            <div class="col-md-3">
+                <p class="text-muted small mb-1">Tempo Restante</p>
+                @if($manifestacao->dias_restantes !== null)
+                <span class="badge bg-{{ $manifestacao->dias_restantes < 0 ? 'danger' : 'success' }}">
+                    {{ $manifestacao->dias_restantes < 0 ? abs($manifestacao->dias_restantes) . ' dias atrasado' : $manifestacao->dias_restantes . ' dias' }}
+                </span>
+                @else
+                <span class="text-muted">--</span>
+                @endif
+            </div>
         </div>
     </div>
 </div>

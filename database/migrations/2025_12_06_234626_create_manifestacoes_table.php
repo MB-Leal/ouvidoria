@@ -28,6 +28,8 @@ return new class extends Migration
                 'RESPONDIDO',
                 'FINALIZADO'
             ])->default('ABERTO');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('archived_by')->nullable();
             $table->enum('canal', [
                 'WEB',
                 'EMAIL',
@@ -52,6 +54,8 @@ return new class extends Migration
             $table->enum('prioridade', ['baixa', 'media', 'alta', 'urgente'])->default('media');
             $table->string('setor_responsavel')->nullable();
             $table->json('tags')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->foreign('archived_by')->references('id')->on('users');
             $table->index('created_at');
         });
     }

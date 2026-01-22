@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 
 class Manifestacao extends Model
 {
@@ -12,31 +13,35 @@ class Manifestacao extends Model
     protected $table = 'manifestacoes';
 
     protected $fillable = [
-        'user_id',
-        'protocolo',
-        'tipo_manifestacao_id',
-        'nome',
-        'email',
-        'telefone',
-        'sigilo_dados',
-        'assunto',
-        'descricao',
-        'status',
-        'canal',
-        'prioridade',
-        'setor_responsavel',
-        'tags',
-        'anexo_path',
-        'resposta',
-        'respondido_em',
-        'data_limite_resposta',
-        'data_resposta',
-        'observacao_interna',
-        'arquivado_em',
-        'motivo_arquivamento'
-    ];
+    'user_id', 
+    'protocolo', 
+    'tipo_manifestacao_id', 
+    'nome', 
+    'email', 
+    'telefone',
+    'sigilo_dados', 
+    'assunto', 
+    'descricao', 
+    'status', 
+    'updated_by', 
+    'archived_by',
+    'canal', 
+    'prioridade', 
+    'setor_responsavel', 
+    'tags', 
+    'anexo_path', 
+    'resposta',
+    'respondido_em', 
+    'data_limite_resposta', 
+    'data_resposta', 
+    'data_entrada',
+    'data_registro_sistema', 
+    'observacao_interna', 
+    'arquivado_em', 
+    'motivo_arquivamento'
+];
 
-    protected $casts = [
+protected $casts = [
         'sigilo_dados' => 'boolean',
         'data_entrada' => 'datetime',
         'data_registro_sistema' => 'datetime',
@@ -47,18 +52,31 @@ class Manifestacao extends Model
         'tags' => 'array',
     ];
 
-    // Métodos CORRETOS (estes devem estar no Model, não na Migration)
-    public function responsavel()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+// Relacionamentos para auditoria
+public function editor() {
+    return $this->belongsTo(User::class, 'updated_by')->withDefault(['name' => 'N/A']);
+}
 
+public function arquivador() {
+    return $this->belongsTo(User::class, 'archived_by')->withDefault(['name' => 'N/A']);
+}
+
+public function responsavel() {
+    return $this->belongsTo(User::class, 'user_id')->withDefault(['name' => 'Sistema/Web']);
+}
+
+    
     public function tipo()
     {
         return $this->belongsTo(TipoManifestacao::class, 'tipo_manifestacao_id');
-    }
+    }    
 
-    // Acessor para status formatado
+    /*
+    |--------------------------------------------------------------------------
+    | Acessores (Formatadores de Dados)
+    |--------------------------------------------------------------------------
+    */
+
     public function getStatusFormatadoAttribute()
     {
         $statuses = [
@@ -71,7 +89,6 @@ class Manifestacao extends Model
         return $statuses[$this->status] ?? $this->status;
     }
 
-    // Acessor para cor do status
     public function getStatusCorAttribute()
     {
         $cores = [
@@ -84,7 +101,6 @@ class Manifestacao extends Model
         return $cores[$this->status] ?? 'light';
     }
 
-    // Acessor para cor da prioridade
     public function getPrioridadeCorAttribute()
     {
         return match ($this->prioridade) {
@@ -96,7 +112,10 @@ class Manifestacao extends Model
         };
     }
 
-    // Método para calcular dias restantes
+    /**
+     * Calcula dias restantes baseado na data limite.
+     * Retorna número positivo para dias restantes e negativo para atraso.
+     */
     public function getDiasRestantesAttribute()
     {
         if (!$this->data_limite_resposta) {
@@ -104,21 +123,37 @@ class Manifestacao extends Model
         }
 
         $hoje = now()->startOfDay();
-        $limite = \Carbon\Carbon::parse($this->data_limite_resposta)->startOfDay();
+        $limite = Carbon::parse($this->data_limite_resposta)->startOfDay();
 
-        return $hoje->diffInDays($limite, false); // negativo se atrasado
-
+        return (int) $hoje->diffInDays($limite, false);
     }
 
-    // Scope para manifestações não arquivadas
+    /*
+    |--------------------------------------------------------------------------
+    | Escopos de Busca (Scopes)
+    |--------------------------------------------------------------------------
+    */
+
     public function scopeNaoArquivadas($query)
     {
         return $query->whereNull('arquivado_em');
     }
 
-    // Scope para manifestações atribuídas ao usuário
     public function scopeAtribuidas($query, $userId)
     {
         return $query->where('user_id', $userId);
     }
+
+protected static function booted()
+{
+    static::creating(function ($manifestacao) {
+        $tipo = \App\Models\TipoManifestacao::find($manifestacao->tipo_manifestacao_id);
+        if ($tipo) {
+            $dataBase = $manifestacao->data_entrada ? \Carbon\Carbon::parse($manifestacao->data_entrada) : now();
+            if (!$manifestacao->data_limite_resposta) {
+                $manifestacao->data_limite_resposta = $dataBase->addDays($tipo->prazo_dias);
+            }
+        }
+    });
+}
 }
