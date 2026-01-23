@@ -22,7 +22,7 @@
             <a href="{{ route('admin.manifestacoes.edit', $manifestacao) }}" class="btn btn-warning">
                 <i class="fas fa-edit me-1"></i> Editar
             </a>
-            <a href="{{ route('admin.manifestacoes.index') }}" class="btn btn-secondary">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i> Voltar
             </a>
         </div>

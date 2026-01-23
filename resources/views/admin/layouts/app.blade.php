@@ -223,11 +223,7 @@
                         <span class="d-none d-sm-inline">{{ Auth::user()->name ?? 'Admin' }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-user me-2"></i> Meu Perfil
-                            </a>
-                        </li>
+                        
                         <li>
                             <hr class="dropdown-divider">
                         </li>

@@ -38,88 +38,72 @@ class RelatorioController extends Controller
      * @param string $data_fim
      * @return array
      */
-    private function gerarRelatorioData(string $data_inicio, string $data_fim): array
-    {
-        // Converte as datas para objetos Carbon para garantir a precisão da consulta
-    $start = Carbon::parse($data_inicio)->startOfDay();
-    $end = Carbon::parse($data_fim)->endOfDay();
+    private function gerarRelatorioData(string $data_inicio, string $data_fim)
+{
+    $inicio = $data_inicio . ' 00:00:00';
+    $fim = $data_fim . ' 23:59:59';
 
-    // Query Base: Filtrar apenas as manifestações dentro do período
-    $query = Manifestacao::whereBetween('created_at', [$start, $end]);
+    $query = Manifestacao::whereBetween('created_at', [$inicio, $fim]);
+    $total = (clone $query)->count();
 
-    // 1. Contagem Total
-    $total_manifestacoes = $query->count();
+    if ($total === 0) return null;
 
-    if ($total_manifestacoes === 0) {
-        // Se não há manifestações, retorne um array vazio ou com zeros
-        return [
-            'total' => 0,
-            'por_status' => [],
-            'por_tipo' => [],
-            'indices' => [
-                'resolutividade' => '0.00',
-                'perc_prazo_ok' => '0.00',
-                'satisfacao' => 'N/A',
-                'parceria' => 'N/A',
-            ],
-            'periodo' => [
-                'inicio' => $start->format('d/m/Y'),
-                'fim' => $end->format('d/m/Y'),
-            ]
-        ];
-    }
+    // 1. Distribuições Básicas
+    $por_status = (clone $query)->select('status', DB::raw('count(*) as total'))
+        ->groupBy('status')->pluck('total', 'status')->toArray();
+        
+    $por_tipo = (clone $query)->with('tipo')->select('tipo_manifestacao_id', DB::raw('count(*) as total'))
+        ->groupBy('tipo_manifestacao_id')->get();
 
-    // 2. Estatísticas por Situação/Status
-    $por_status = (clone $query)
-        ->select('status', DB::raw('count(*) as total'))
-        ->groupBy('status')
-        ->pluck('total', 'status')
-        ->toArray();
+    $por_canal = (clone $query)->select('canal', DB::raw('count(*) as total'))
+        ->groupBy('canal')->pluck('total', 'canal')->toArray();
 
-    // 3. Estatísticas por Tipo (Natureza)
-    $por_tipo = (clone $query)
-        ->select('tipo_manifestacao_id', DB::raw('count(*) as total'))
-        ->with('tipo')
-        ->groupBy('tipo_manifestacao_id')
-        ->get();
-
-    // 4. Cálculo de Índices
-    $respondidas = $por_status['RESPONDIDA'] ?? 0;
-    $resolutividade = number_format(($respondidas / $total_manifestacoes) * 100, 2);
-
-    // 5. Tempo de Resposta (Assumindo coluna 'data_resposta' e prazo de 30 dias)
-    // Se a sua coluna de resposta for outra (ex: 'updated_at'), ajuste aqui.
-    $dentro_do_prazo = (clone $query)
-        ->where('status', 'RESPONDIDA')
+    // 2. Eficiência de Prazos (Conforme o seu SQL)
+    $prazos_por_tipo = Manifestacao::join('tipos_manifestacao', 'manifestacoes.tipo_manifestacao_id', '=', 'tipos_manifestacao.id')
+        ->whereBetween('manifestacoes.created_at', [$inicio, $fim])
         ->whereNotNull('data_resposta')
-        // Verifica se a diferença de dias entre a criação e a resposta é <= 30
-        ->whereRaw('DATEDIFF(data_resposta, created_at) <= 30') 
-        ->count();
+        ->select(
+            'tipos_manifestacao.nome as tipo_nome',
+            DB::raw('COUNT(*) as total_respondidas'),
+            DB::raw('SUM(CASE WHEN DATEDIFF(data_resposta, data_entrada) <= tipos_manifestacao.prazo_dias THEN 1 ELSE 0 END) as dentro_prazo'),
+            DB::raw('SUM(CASE WHEN DATEDIFF(data_resposta, data_entrada) > tipos_manifestacao.prazo_dias THEN 1 ELSE 0 END) as fora_prazo')
+        )
+        ->groupBy('tipos_manifestacao.id', 'tipos_manifestacao.nome')->get();
 
-    $perc_prazo = $respondidas > 0 ? number_format(($dentro_do_prazo / $respondidas) * 100, 2) : 0;
+    // 3. Perfil de Identificação
+    $identificacao = [
+        'sigilosa' => (clone $query)->where('sigilo_dados', true)->count(),
+        'anonima' => (clone $query)->where(function($q) {
+            $q->whereNull('nome')->orWhere('nome', 'like', '%Anônimo%');
+        })->count(),
+        'nao_sigilosa' => (clone $query)->where('sigilo_dados', false)
+            ->whereNotNull('nome')->where('nome', 'not like', '%Anônimo%')->count(),
+    ];
 
-    // 6. Estatísticas por Canal de Atendimento (NOVO)
-$por_canal = (clone $query)
-    ->select('canal', DB::raw('count(*) as total'))
-    ->groupBy('canal')
-    ->pluck('total', 'canal')
-    ->toArray();
+    // 4. Índices
+    $respondidas = ($por_status['RESPONDIDO'] ?? 0) + ($por_status['FINALIZADO'] ?? 0);
+    $resolutividade = number_format(($respondidas / $total) * 100, 2);
+    
+    $dentro_prazo_total = $prazos_por_tipo->sum('dentro_prazo');
+    $total_resp = $prazos_por_tipo->sum('total_respondidas');
+    $perc_prazo = $total_resp > 0 ? number_format(($dentro_prazo_total / $total_resp) * 100, 2) : 0;
 
     return [
-        'total' => $total_manifestacoes,
+        'periodo' => [
+            'inicio' => \Carbon\Carbon::parse($data_inicio)->format('d/m/Y'),
+            'fim' => \Carbon\Carbon::parse($data_fim)->format('d/m/Y')
+        ],
+        'total' => $total,
         'por_status' => $por_status,
         'por_tipo' => $por_tipo,
         'por_canal' => $por_canal,
+        'prazos_por_tipo' => $prazos_por_tipo,
+        'identificacao' => $identificacao,
         'indices' => [
             'resolutividade' => $resolutividade,
             'perc_prazo_ok' => $perc_prazo,
-            'satisfacao' => 'N/A (Requer pesquisa)',
-            'parceria' => 'N/A (Requer pesquisa)',
-        ],
-        'periodo' => [
-            'inicio' => $start->format('d/m/Y'),
-            'fim' => $end->format('d/m/Y'),
+            'satisfacao' => 'Em implementação'
         ]
     ];
-    }
+}
 }

@@ -12,19 +12,17 @@
         </div>
         <div class="card-body">
             <form action="{{ route('admin.relatorios.index') }}" method="GET">
-                <div class="row">
-                    <div class="col-md-5 mb-3">
-                        <label for="data_inicio" class="form-label">Data de Início</label>
-                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
-                               value="{{ $data_inicio ?? '' }}" required>
+                <div class="row align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label small fw-bold">Data de Início</label>
+                        <input type="date" class="form-control" name="data_inicio" value="{{ $data_inicio }}" required>
                     </div>
-                    <div class="col-md-5 mb-3">
-                        <label for="data_fim" class="form-label">Data de Fim</label>
-                        <input type="date" class="form-control" id="data_fim" name="data_fim" 
-                               value="{{ $data_fim ?? '' }}" required>
+                    <div class="col-md-5">
+                        <label class="form-label small fw-bold">Data de Fim</label>
+                        <input type="date" class="form-control" name="data_fim" value="{{ $data_fim }}" required>
                     </div>
-                    <div class="col-md-2 mb-3 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i> Gerar Relatório</button>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Gerar Relatório</button>
                     </div>
                 </div>
             </form>
@@ -32,91 +30,48 @@
     </div>
 
     @if ($relatorio)
-    
         <div class="text-center mb-4">
-            <h2 class="h4">Relatório Semestral de Atividades</h2>
+            <h2 class="h4">Relatório de Atividades da Ouvidoria</h2>
             <p class="lead text-muted">Período: {{ $relatorio['periodo']['inicio'] }} a {{ $relatorio['periodo']['fim'] }}</p>
         </div>
 
-        <hr>
-
-        <div class="row mb-5">
-            <h4 class="mb-3 text-primary"><i class="fas fa-balance-scale me-2"></i> Índices e Desempenho</h4>
-            
+        <div class="row mb-4">
             <div class="col-md-3 mb-4">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Índice de Resolutividade
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            {{ $relatorio['indices']['resolutividade'] }}%
-                        </div>
-                        <small class="text-muted">Demandas respondidas / Total</small>
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Índice Resolutividade</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ $relatorio['indices']['resolutividade'] }}%</div>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-3 mb-4">
                 <div class="card border-left-info shadow h-100 py-2">
                     <div class="card-body">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Tempo de Resposta (no Prazo)
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            {{ $relatorio['indices']['perc_prazo_ok'] }}%
-                        </div>
-                        <small class="text-muted">Respondidas em até 30 dias</small>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">No Prazo (LAI)</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ $relatorio['indices']['perc_prazo_ok'] }}%</div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-3 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Índice de Satisfação
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            {{ $relatorio['indices']['satisfacao'] }}
-                        </div>
-                        <small class="text-muted">Requer pesquisa de satisfação</small>
-                    </div>
-                </div>
-            </div>
-
             <div class="col-md-3 mb-4">
                 <div class="card border-left-secondary shadow h-100 py-2">
                     <div class="card-body">
-                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
-                            TOTAL DE DEMANDAS
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            {{ $relatorio['total'] }}
-                        </div>
-                        <small class="text-muted">Manifestações no período</small>
+                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Total de Demandas</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ $relatorio['total'] }}</div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <hr>
 
-        <div class="row mb-5">
-            <div class="col-xl-6 col-lg-6">
-                <div class="card shadow">
-                    <div class="card-header py-3 bg-light">
-                        <h6 class="m-0 font-weight-bold text-primary">Distribuição por Situação (Status)</h6>
-                    </div>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Situação das Demandas</h6></div>
                     <div class="card-body">
                         <ul class="list-group list-group-flush">
                             @foreach ($relatorio['por_status'] as $status => $total)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <strong>{{ $status }}</strong>
-                                <div>
-                                    <span class="badge bg-primary rounded-pill me-2">{{ $total }}</span>
-                                    ({{ $relatorio['total'] > 0 ? number_format(($total / $relatorio['total']) * 100, 2) : 0 }}%)
-                                </div>
+                                <span>{{ $status }}</span>
+                                <span class="badge bg-primary rounded-pill">{{ $total }}</span>
                             </li>
                             @endforeach
                         </ul>
@@ -124,82 +79,97 @@
                 </div>
             </div>
 
-            <div class="col-xl-6 col-lg-6">
-        <div class="card shadow">
-            <div class="card-header py-3 bg-light">
-                <h6 class="m-0 font-weight-bold text-primary">Canais Utilizados no Período</h6>
-            </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    @forelse ($relatorio['por_canal'] as $canal => $total)
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>
-                            {{ 
-                                match ($canal) {
-                                    'WEB' => 'Formulário Web',
-                                    'EMAIL' => 'E-mail',
-                                    'TELEFONE' => 'Telefone Fixo',
-                                    'PRESENCIAL' => 'Presencial',
-                                    'WHATSAPP' => 'WhatsApp',
-                                    default => $canal, // Caso haja algum valor não mapeado
-                                }
-                            }}
-                        </strong>
-                        <div>
-                            <span class="badge bg-primary rounded-pill me-2">{{ $total }}</span>
-                            ({{ $relatorio['total'] > 0 ? number_format(($total / $relatorio['total']) * 100, 2) : 0 }}%)
-                        </div>
-                    </li>
-                    @empty
-                    <li class="list-group-item text-center text-muted">Nenhuma manifestação encontrada neste período.</li>
-                    @endforelse
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-xl-6 col-lg-6">
-        <div class="card shadow h-100">
-            <div class="card-header py-3 bg-light">
-                <h6 class="m-0 font-weight-bold text-secondary">A Importância do Registro Manual</h6>
-            </div>
-            <div class="card-body">
-                <p>Para o cumprimento da LAI, o registro correto dos canais **Presencial, E-mail, Telefone e WhatsApp** é fundamental, pois garante que a contagem total de demandas e o cálculo do Índice de Resolutividade sejam precisos e reflitam a realidade da Ouvidoria.</p>
-                <p class="mb-0">**Atenção:** Certifique-se de que sua interface de **criação de manifestação manual** na área administrativa permita a seleção correta de um desses canais, salvando o valor no campo `canal` da tabela `manifestacoes`.</p>
-            </div>
-        </div>
-    </div>
-
-        <div class="row mb-5">
-            <h4 class="mb-3 text-primary"><i class="fas fa-phone-alt me-2"></i> Canais de Atendimento</h4>
-            <div class="col-12">
-                <div class="card shadow">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Canais de Atendimento</h6></div>
                     <div class="card-body">
-                        <p class="text-muted">
-                            **Nota:** A estatística **"Por Canal de Atendimento"** requer que você tenha um campo `canal` (ou similar) no seu Model `Manifestacao` para ser implementada a contagem. O modelo TCE-PA inclui esse dado.
-                        </p>
-                        <p>Exemplo de dados a incluir: E-mail, Telefone, Presencial, Formulário Web, etc.</p>
-                        {{-- Implementação futura: Adicionar lógica no Controller para $por_canal e exibir aqui --}}
+                        <ul class="list-group list-group-flush">
+                            @forelse ($relatorio['por_canal'] as $canal => $total)
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ $canal == 'WEB' ? 'Formulário Site' : $canal }}</span>
+                                <span class="badge bg-info rounded-pill">{{ $total }}</span>
+                            </li>
+                            @empty
+                            <li class="list-group-item text-center">Sem dados de canais.</li>
+                            @endforelse
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="row mt-4">
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3 bg-white">
+                        <h6 class="m-0 font-weight-bold text-primary">Eficiência de Resposta por Tipo (Prazos SQL)</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-3">Tipo</th>
+                                    <th class="text-center">Respondidas</th>
+                                    <th class="text-center">No Prazo</th>
+                                    <th class="text-center">Atrasadas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($relatorio['prazos_por_tipo'] as $item)
+                                <tr>
+                                    <td class="ps-3">{{ $item->tipo_nome }}</td>
+                                    <td class="text-center">{{ $item->total_respondidas }}</td>
+                                    <td class="text-center text-success fw-bold">{{ $item->dentro_prazo }}</td>
+                                    <td class="text-center text-danger fw-bold">{{ $item->fora_prazo }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3 bg-white">
+                        <h6 class="m-0 font-weight-bold text-primary">Identificação</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">Pública</small>
+                            <div class="d-flex justify-content-between">
+                                <span class="h5">{{ $relatorio['identificacao']['nao_sigilosa'] }}</span>
+                                <i class="fas fa-user text-success"></i>
+                            </div>
+                        </div>
+                        <div class="mb-3 border-top pt-2">
+                            <small class="text-muted">Sigilosa</small>
+                            <div class="d-flex justify-content-between">
+                                <span class="h5">{{ $relatorio['identificacao']['sigilosa'] }}</span>
+                                <i class="fas fa-user-shield text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="border-top pt-2">
+                            <small class="text-muted">Anônima</small>
+                            <div class="d-flex justify-content-between">
+                                <span class="h5">{{ $relatorio['identificacao']['anonima'] }}</span>
+                                <i class="fas fa-user-secret text-secondary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-end mb-5">
+            <button onclick="window.print()" class="btn btn-dark"><i class="fas fa-print me-1"></i> Imprimir</button>
+        </div>
+
     @else
-        <div class="alert alert-info shadow-sm" role="alert">
-            <h4 class="alert-heading">Relatório da Ouvidoria</h4>
-            <p>Selecione a **Data de Início** e **Data de Fim** para gerar o relatório de atividades da ouvidoria, conforme a exigência da LAI. A maioria dos órgãos opta por relatórios trimestrais ou semestrais, como o seu.</p>
+        <div class="alert alert-info border-0 shadow-sm">
+            <h4 class="alert-heading">Relatório Gerencial</h4>
+            <p class="mb-0">Escolha um período para analisar a performance da Ouvidoria FASPM/PA.</p>
         </div>
     @endif
 </div>
 @endsection
-
-@push('styles')
-<style>
-    /* Estilos de borda esquerda dos cards (copiados do dashboard) */
-    .border-left-success { border-left: 4px solid #1cc88a !important; }
-    .border-left-info { border-left: 4px solid #36b9cc !important; }
-    .border-left-warning { border-left: 4px solid #f6c23e !important; }
-    .border-left-secondary { border-left: 4px solid #858796 !important; }
-</style>
-@endpush
