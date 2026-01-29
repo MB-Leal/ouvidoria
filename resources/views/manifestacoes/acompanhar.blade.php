@@ -8,14 +8,14 @@
         <div class="card card-faspm">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">
-                    <i class="bi bi-search me-2"></i> 
+                    <i class="bi bi-search me-2"></i>
                     Acompanhar Manifestação
                 </h4>
             </div>
             <div class="card-body">
                 <form action="{{ route('manifestacoes.buscar') }}" method="POST" id="form-acompanhar">
                     @csrf
-                    
+
                     <div class="text-center mb-5">
                         <div class="mb-4">
                             <i class="bi bi-search-heart fs-1 text-primary"></i>
@@ -32,15 +32,15 @@
                             <span class="input-group-text bg-light border-end-0">
                                 <i class="bi bi-file-text text-primary"></i>
                             </span>
-                            <input type="text" 
-                                   class="form-control @error('protocolo') is-invalid @enderror border-start-0" 
-                                   name="protocolo" 
-                                   value="{{ old('protocolo') }}"
-                                   placeholder="Ex: FASPM-2024-000001"
-                                   required
-                                   style="font-family: 'Courier New', monospace; font-weight: bold;">
+                            <input type="text"
+                                class="form-control @error('protocolo') is-invalid @enderror border-start-0"
+                                name="protocolo"
+                                value="{{ old('protocolo') }}"
+                                placeholder="Ex: FASPM-2024-000001"
+                                required
+                                style="font-family: 'Courier New', monospace; font-weight: bold;">
                             @error('protocolo')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <small class="text-muted mt-2 d-block">
@@ -59,7 +59,7 @@
                                 <h6 class="mb-2">Não lembra o formato do protocolo?</h6>
                                 <p class="mb-2">O protocolo segue o formato: <code class="text-primary">FASPM-ANO-NÚMERO</code></p>
                                 <p class="mb-0">
-                                    <strong>Exemplo:</strong> 
+                                    <strong>Exemplo:</strong>
                                     <span class="badge bg-dark">FASPM-{{ date('Y') }}-000001</span>
                                 </p>
                             </div>
@@ -137,7 +137,7 @@
                                 <p class="small mb-0">
                                     Entre em contato com nossa equipe:
                                     <br>
-                                    <strong>(91) 3219-3200</strong>
+                                    <strong>(91) 3251-3163</strong>
                                 </p>
                             </div>
                         </div>

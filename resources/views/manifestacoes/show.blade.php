@@ -12,7 +12,7 @@
                     <div>
                         <h4 class="mb-0">
                             <i class="bi bi-file-text me-2"></i>
-                            Manifestação Registrada
+                            Detalhes da Manifestação
                         </h4>
                     </div>
                     <div class="text-end">
@@ -27,8 +27,8 @@
                         <i class="bi bi-check-circle-fill fs-2"></i>
                     </div>
                     <div>
-                        <h5 class="alert-heading mb-1">Manifestação registrada com sucesso!</h5>
-                        <p class="mb-0">Sua manifestação foi recebida e está em análise pela nossa equipe.</p>
+                        <h5 class="alert-heading mb-1">Manifestação encontrada em nosso sistema!</h5>
+                        <p class="mb-0">Sua manifestação está em processo conforme dados abaixo.</p>
                     </div>
                 </div>
             </div>
