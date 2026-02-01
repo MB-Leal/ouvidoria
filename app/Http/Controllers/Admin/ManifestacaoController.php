@@ -244,7 +244,10 @@ class ManifestacaoController extends Controller
             'protocolo' => $protocolo,
             'chave_acesso' => $chaveAleatoria,
             'email_manifestante' => $manifestacao->email,
-            'manifestacao_id' => $manifestacao->id
+            'assunto' => $manifestacao->assunto,
+            'descricao' => $manifestacao->descricao,
+            'manifestacao_id' => $manifestacao->id,
+            'canal_label' => $request->canal
         ]);
     }
 

@@ -211,42 +211,42 @@
                             </div>
                         </div>
                         <div class="row">
-    <div class="col-md-6 mb-3">
-        <label for="data_entrada" class="form-label">
-            <i class="fas fa-calendar-alt me-1"></i> Data de Entrada da Manifestação
-        </label>
-        <input type="datetime-local" 
-               name="data_entrada" 
-               id="data_entrada"
-               class="form-control @error('data_entrada') is-invalid @enderror"
-               value="{{ old('data_entrada', now()->format('Y-m-d\TH:i')) }}">
-        @error('data_entrada')
-        <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-        <small class="text-muted">
-            Data em que a manifestação realmente chegou (ex: data do e-mail, data do atendimento presencial).
-        </small>
-    </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="data_entrada" class="form-label">
+                                    <i class="fas fa-calendar-alt me-1"></i> Data de Entrada da Manifestação
+                                </label>
+                                <input type="datetime-local"
+                                    name="data_entrada"
+                                    id="data_entrada"
+                                    class="form-control @error('data_entrada') is-invalid @enderror"
+                                    value="{{ old('data_entrada', now()->format('Y-m-d\TH:i')) }}">
+                                @error('data_entrada')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">
+                                    Data em que a manifestação realmente chegou (ex: data do e-mail, data do atendimento presencial).
+                                </small>
+                            </div>
 
-    <div class="col-md-6 mb-3">
-        <label for="data_registro_sistema" class="form-label">
-            <i class="fas fa-database me-1"></i> Data de Registro no Sistema
-        </label>
-        <input type="datetime-local" 
-               name="data_registro_sistema" 
-               id="data_registro_sistema"
-               class="form-control @error('data_registro_sistema') is-invalid @enderror"
-               value="{{ old('data_registro_sistema', now()->format('Y-m-d\TH:i')) }}"
-               readonly
-               style="background-color: #f8f9fa;">
-        @error('data_registro_sistema')
-        <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-        <small class="text-muted">
-            Data atual (preenchida automaticamente).
-        </small>
-    </div>
-</div>
+                            <div class="col-md-6 mb-3">
+                                <label for="data_registro_sistema" class="form-label">
+                                    <i class="fas fa-database me-1"></i> Data de Registro no Sistema
+                                </label>
+                                <input type="datetime-local"
+                                    name="data_registro_sistema"
+                                    id="data_registro_sistema"
+                                    class="form-control @error('data_registro_sistema') is-invalid @enderror"
+                                    value="{{ old('data_registro_sistema', now()->format('Y-m-d\TH:i')) }}"
+                                    readonly
+                                    style="background-color: #f8f9fa;">
+                                @error('data_registro_sistema')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">
+                                    Data atual (preenchida automaticamente).
+                                </small>
+                            </div>
+                        </div>
 
                         <!-- Descrição da Manifestação -->
                         <div class="mb-4">
@@ -347,38 +347,69 @@
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i> Cadastro Realizado!</h5>
             </div>
-            <div class="modal-body text-center p-4">
-                <p class="mb-1">Manifestação registrada com sucesso.</p>
-                <div class="bg-light p-3 rounded mb-3 border">
-                    <small class="text-muted d-block">PROTOCOLO</small>
-                    <h4 class="text-primary fw-bold mb-2">{{ session('protocolo') }}</h4>
-                    <small class="text-muted d-block">CHAVE DE ACESSO (TOKEN)</small>
-                    <h4 class="text-danger fw-bold">{{ session('chave_acesso') }}</h4>
-                </div>
+            <div class="modal-body p-0">
+                {{-- Esta div é o que o CSS buscará para imprimir --}}
+                <div id="area-comprovante" class="p-5 bg-white">
 
-                @if(session('email_manifestante'))
-                    <div class="alert alert-info small">
-                        O manifestante forneceu o e-mail: <strong>{{ session('email_manifestante') }}</strong>
+                    {{-- Cabeçalho do Documento --}}
+                    <div class="text-center mb-4 border-bottom pb-3">
+                        <h3 class="fw-bold mb-0" style="color: #004481;">OUVIDORIA FASPM/PA</h3>
+                        <p class="mb-0 small text-uppercase">Fundo de Assistência Social da Polícia Militar do Pará</p>
+                        <p class="fw-bold small mt-2">COMPROVANTE DE REGISTRO DE MANIFESTAÇÃO</p>
                     </div>
-                    <form action="{{ route('admin.manifestacoes.notificar', session('manifestacao_id')) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="chave" value="{{ session('chave_acesso') }}">
-                        <button type="submit" class="btn btn-primary w-100 mb-2">
-                            <i class="fas fa-paper-plane me-2"></i> Enviar Dados por E-mail
-                        </button>
-                    </form>
-                @else
-                    <div class="alert alert-warning small">
-                        <strong>Manifestação Anônima:</strong> Não há e-mail para envio. Imprima os dados para o cidadão.
+
+                    {{-- Quadro Principal: Protocolo e Token --}}
+                    <div class="row mb-4 bg-light p-3 rounded border mx-0 align-items-center">
+                        <div class="col-6">
+                            <small class="text-muted d-block">NÚMERO DE PROTOCOLO</small>
+                            <span class="h4 fw-bold text-primary mb-0">{{ session('protocolo') }}</span>
+                        </div>
+                        <div class="col-6 text-end">
+                            <small class="text-muted d-block">CHAVE DE ACESSO (TOKEN)</small>
+                            <span class="h4 fw-bold text-danger mb-0">{{ session('chave_acesso') }}</span>
+                        </div>
                     </div>
-                @endif
-                
-                <button onclick="window.print()" class="btn btn-outline-secondary w-100 mb-2">
-                    <i class="fas fa-print me-2"></i> Imprimir Comprovante
-                </button>
+
+                    {{-- Informações do Manifestante e Detalhes --}}
+                    <div class="row mb-4">
+                        <div class="col-6 border-end">
+                            <h6 class="fw-bold border-bottom pb-1 small">DADOS DO MANIFESTANTE</h6>
+                            <p class="mb-1 small"><strong>Nome:</strong> {{ session('nome_manifestante') ?? 'Anônimo' }}</p>
+                            <p class="mb-1 small"><strong>E-mail:</strong> {{ session('email_manifestante') ?? 'Não informado' }}</p>
+                        </div>
+                        <div class="col-6 ps-4">
+                            <h6 class="fw-bold border-bottom pb-1 small">INFORMAÇÕES DO REGISTRO</h6>
+                            <p class="mb-1 small"><strong>Data/Hora:</strong> {{ now()->format('d/m/Y H:i') }}</p>
+                            <p class="mb-1 small"><strong>Canal:</strong> {{ session('canal_label') ?? 'Atendimento Manual' }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Conteúdo da Manifestação --}}
+                    <div class="mb-4">
+                        <h6 class="fw-bold border-bottom pb-1 small">ASSUNTO</h6>
+                        <p class="small">{{ session('assunto') }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold border-bottom pb-1 small">DESCRIÇÃO DO RELATO</h6>
+                        <div class="text-justify small" style="line-height: 1.5; min-height: 150px;">
+                            {{ session('descricao') }}
+                        </div>
+                    </div>
+
+                    {{-- Rodapé de Validação --}}
+                    <div class="mt-5 text-center border-top pt-3">
+                        <p class="small text-muted mb-0">Para acompanhar o andamento, acesse nosso portal:</p>
+                        <p class="fw-bold small">{{ url('/acompanhar') }}</p>
+                        <p class="text-muted" style="font-size: 10px;">Documento gerado eletronicamente em {{ now()->format('d/m/Y H:i:s') }}</p>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <a href="{{ route('admin.manifestacoes.index') }}" class="btn btn-secondary">Fechar e Ir para Lista</a>
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="fas fa-print me-2"></i> Imprimir Comprovante
+                </button>
             </div>
         </div>
     </div>
@@ -447,6 +478,76 @@
 
     #tipo_manifestacao_id {
         transition: border-color 0.3s ease;
+    }
+
+    /* AJUSTES PARA IMPRESSÃO A4 */
+    @media print {
+
+        /* Configura a página para A4 */
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        /* Esconde tudo o que não for o conteúdo do modal */
+        body * {
+            visibility: hidden;
+        }
+
+        /* Torna visível apenas a área de impressão do modal */
+        #modalSucessoManual,
+        #modalSucessoManual *,
+        #area-impressao,
+        #area-impressao * {
+            visibility: visible;
+        }
+
+        #modalSucessoManual {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            visibility: visible;
+        }
+
+        .modal-content {
+            border: none !important;
+        }
+
+        .modal-body {
+            padding: 0 !important;
+        }
+
+        /* Garante que o Bootstrap não quebre as colunas no papel */
+        .row {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+        }
+
+        .col-6 {
+            width: 50% !important;
+        }
+
+        /* Força a impressão de cores e fundos cinzas */
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa !important;
+            border: 1px solid #ddd !important;
+        }
+
+        .text-primary {
+            color: #004481 !important;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
     }
 </style>
 @endpush

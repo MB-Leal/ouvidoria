@@ -34,7 +34,7 @@
                                class="form-control form-control-lg @error('protocolo') is-invalid @enderror" 
                                id="protocolo" 
                                name="protocolo" 
-                               placeholder="Ex: FASPM.2025.0001"
+                               placeholder="Ex: FASPM-2025-0001"
                                value="{{ old('protocolo') }}" 
                                required>
                         <small class="text-muted">Informe o protocolo completo recebido.</small>

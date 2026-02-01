@@ -73,11 +73,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <h5 class="text-primary fw-bold"><i class="bi bi-flag me-2"></i>Nossa Missão</h5>
-                            <p>Promover assistência social e suporte de excelência aos policiais militares do Estado do Pará e seus dependentes, gerindo recursos com transparência e responsabilidade.</p>
+                            <p>Promover assistência social e suporte de excelência aos policiais e bombeiros militares do Estado do Pará e seus dependentes, gerindo recursos com transparência e responsabilidade.</p>
                         </div>
                         <div class="col-md-6 mb-3">
                             <h5 class="text-primary fw-bold"><i class="bi bi-eye me-2"></i>Nossa Visão</h5>
-                            <p>Ser referência em gestão de fundo do assistência militar no Estado do Pará, destacando-se pela eficiência no atendimento e pelo impacto positivo na qualidade de vida da tropa.</p>
+                            <p>Ser referência na prestação de serviço social aos policiais e pombeiros, no Estado do Pará, destacando-se pela eficiência no atendimento e pelo impacto positivo na qualidade de vida da tropa.</p>
                         </div>
                     </div>
                 </div>
