@@ -58,8 +58,8 @@ class RolesAndUsersSeeder extends Seeder
             ['email' => 'marcosbleal26@gmail.com'],
             [
                 'name' => 'Marcos Leal',
-                'password' => Hash::make('marcos123'),
-                'role' => 'admin', // Garante que o método isAdmin() funcione
+                'password' => Hash::make('Sdyj6rdx@'),
+                'role' => 'admin',
                 'ativo' => true,
             ]
         );
@@ -70,7 +70,7 @@ class RolesAndUsersSeeder extends Seeder
             ['email' => 'drikomaia89@gmail.com'],
             [
                 'name' => 'Adriano Maia',
-                'password' => Hash::make('adriano123'),
+                'password' => Hash::make('26157795'),
                 'role' => 'admin',
                 'ativo' => true,
             ]
