@@ -44,10 +44,10 @@
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-bold" id="carta-tab" data-bs-toggle="tab" data-bs-target="#carta" type="button" role="tab">
-                        <i class="bi bi-file-earmark-pdf me-2"></i>Carta de Serviços
-                    </button>
-                </li>
+    <button class="nav-link fw-bold" id="carta-tab" data-bs-toggle="tab" data-bs-target="#carta" type="button" role="tab">
+        <i class="bi bi-file-earmark-pdf me-2"></i>Carta de Serviços
+    </button>
+</li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link fw-bold" id="relatorios-tab" data-bs-toggle="tab" data-bs-target="#relatorios" type="button" role="tab">
                         <i class="bi bi-graph-up me-2"></i>Relatórios Anuais
@@ -87,7 +87,7 @@
                         <i class="bi bi-file-earmark-pdf text-danger display-4 mb-3"></i>
                         <h5>Carta de Serviços ao Usuário</h5>
                         <p class="text-muted">Consulte detalhadamente todos os serviços oferecidos pelo FASPM/PA e os prazos de atendimento.</p>
-                        <a href="{{ asset('files/carta_de_servicos_faspm.pdf') }}" target="_blank" class="btn btn-outline-danger px-4">
+                        <a href="{{ asset('arquivos/CARTA DE SERVIÇOS AO CIDADÃO.pdf') }}" target="_blank" class="btn btn-outline-danger px-4">
                             <i class="bi bi-download me-2"></i>Visualizar Carta de Serviços (PDF)
                         </a>
                     </div>

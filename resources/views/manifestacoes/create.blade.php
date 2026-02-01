@@ -23,125 +23,138 @@
                                 <label class="form-label fw-bold text-primary">
                                     <i class="bi bi-tag me-1"></i> Tipo de Manifestação *
                                 </label>
-                                <select class="form-select @error('tipo_manifestacao_id') is-invalid @enderror"
-                                    name="tipo_manifestacao_id" required>
+                                <select class="form-select @error('tipo_manifestacao_id') is-invalid @enderror" name="tipo_manifestacao_id" required>
                                     <option value="">Selecione o tipo...</option>
                                     @foreach($tipos as $tipo)
-                                    <option value="{{ $tipo->id }}"
-                                        {{ old('tipo_manifestacao_id') == $tipo->id ? 'selected' : '' }}
-                                        data-cor="{{ $tipo->cor }}"
-                                        data-prazo="{{ $tipo->prazo_dias }}">
+                                    <option value="{{ $tipo->id }}" {{ old('tipo_manifestacao_id') == $tipo->id ? 'selected' : '' }} data-prazo="{{ $tipo->prazo_dias }}">
                                         {{ $tipo->nome }}
                                     </option>
                                     @endforeach
                                 </select>
-                                @error('tipo_manifestacao_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="text-muted">Escolha o tipo de manifestação mais adequado</small>
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label fw-bold text-primary">
-                                    <i class="bi bi-person me-1"></i> Dados Pessoais
-                                </label>
+                            <div class="alert alert-light border-0 pb-0 small text-muted">
+                                <i class="bi bi-shield-check me-1"></i>
+                                “Seus dados serão utilizados exclusivamente para fins de comunicação e acompanhamento da manifestação, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).”
+                            </div>
 
-                                <div class="mb-3">
-                                    <input type="text"
-                                        class="form-control @error('nome') is-invalid @enderror"
-                                        name="nome"
-                                        value="{{ old('nome') }}"
-                                        placeholder="Nome completo *"
-                                        required>
-                                    @error('nome')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <input type="email"
-                                        class="form-control @error('email') is-invalid @enderror"
-                                        name="email"
-                                        value="{{ old('email') }}"
-                                        placeholder="E-mail *"
-                                        required>
-                                    @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <input type="text"
-                                        class="form-control @error('telefone') is-invalid @enderror"
-                                        name="telefone"
-                                        value="{{ old('telefone') }}"
-                                        placeholder="Telefone (opcional)"
-                                        oninput="mascaraTelefone(this)">
-                                    @error('telefone')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="text-muted">Formato: (91) 99999-9999</small>
+                            <div class="card border-warning mb-3">
+                                <div class="card-body py-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="is_anonymous" name="is_anonymous" value="1" onchange="togglePersonalData(this.checked)">
+                                        <label class="form-check-label fw-bold" for="is_anonymous">
+                                            Desejo realizar uma manifestação ANÔNIMA
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
-                            {{-- Campo Sigilo dos Dados (DEPOIS dos dados pessoais) --}}
+                            <div id="personal_data_fields" class="mb-4">
+                                <div class="mb-3">
+                                    <label class="form-label">E-mail * <small>(Obrigatório para identificados)</small></label>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Nome <small>(Opcional)</small></label>
+                                    <input type="text" class="form-control" id="nome" name="nome" value="{{ old('nome') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Telefone <small>(Opcional)</small></label>
+                                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ old('telefone') }}" oninput="mascaraTelefone(this)">
+                                </div>
+                            </div>
+
+                            <div id="anonymous_warning" class="alert alert-warning d-none">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Ao optar pelo anonimato, você <strong>não</strong> receberá e-mails.
+                                <strong>Anote o Protocolo e o Token</strong> que serão gerados ao final para consulta.
+                            </div>
+
                             <div class="card border mb-4">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-shield-alt me-2"></i> Sigilo dos Dados Pessoais
-                                    </h6>
+                                <div class="card-header bg-light py-2">
+                                    <h6 class="mb-0"><i class="bi bi-incognito me-2"></i> Sigilo dos Dados Pessoais</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="alert alert-info mb-3">
-                                        <i class="fas fa-info-circle me-2"></i>
-                                        <strong>Informação Importante:</strong> De acordo com a Lei de Acesso à Informação (Lei nº 12.527/2011),
-                                        seus dados pessoais são protegidos. Marcar "Sim" indica que você não autoriza a divulgação pública
-                                        de suas informações pessoais em relatórios ou respostas públicas.
+                                    <p class="small text-muted mb-2">Seus dados são protegidos pela LAI (Lei 12.527/2011). Marcar "Sim" impede a divulgação do seu nome em relatórios públicos.</p>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sigilo_dados" id="sigilo_sim" value="1" {{ old('sigilo_dados') == '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="sigilo_sim">Sim, quero sigilo</label>
                                     </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label d-block">
-                                            <strong>Deseja que seus dados pessoais tenham sigilo?</strong>
-                                        </label>
-
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input"
-                                                type="radio"
-                                                name="sigilo_dados"
-                                                id="sigilo_sim"
-                                                value="1"
-                                                {{ old('sigilo_dados') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="sigilo_sim">
-                                                 Sim, quero sigilo
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input"
-                                                type="radio"
-                                                name="sigilo_dados"
-                                                id="sigilo_nao"
-                                                value="0"
-                                                {{ old('sigilo_dados', '0') == '0' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="sigilo_nao">
-                                                 Não precisa de sigilo
-                                            </label>
-                                        </div>
-
-                                        @error('sigilo_dados')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="alert alert-warning small mb-0">
-                                        <i class="fas fa-exclamation-triangle me-2"></i>
-                                        <strong>Observação:</strong> Mesmo com sigilo, seus dados serão acessíveis aos responsáveis
-                                        pela análise da manifestação para fins de resposta e acompanhamento.
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sigilo_dados" id="sigilo_nao" value="0" {{ old('sigilo_dados', '0') == '0' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="sigilo_nao">Não preciso de sigilo</label>
                                     </div>
                                 </div>
                             </div>
 
+                            <div class="card mb-3">
+                                <div class="card-header bg-light py-1"><strong>Termo de Privacidade</strong></div>
+                                <div class="card-body p-2" style="height: 120px; overflow-y: scroll; font-size: 0.75rem; background-color: #f8f9fa;">
+                                    <h6>TERMO DE PRIVACIDADE DA OUVIDORIA - FASPM</h6>                                    
+                                        <strong>Fundo de Assistência Social da Polícia Militar do Pará – FASPM</strong>
+                                    </p>
 
+                                    <p>O <strong>Fundo de Assistência Social da Polícia Militar do Pará – FASPM</strong>, por meio de sua Ouvidoria, reafirma o compromisso com a proteção dos dados pessoais dos cidadãos, em conformidade com a <strong>Lei Geral de Proteção de Dados Pessoais – LGPD (Lei nº 13.709/2018)</strong>.</p>
+
+                                    <p>Este Termo tem como objetivo informar, de forma clara e transparente, como os dados pessoais são coletados, utilizados, armazenados e protegidos no âmbito da Ouvidoria.</p>
+
+                                    <p><strong>1. Finalidade do tratamento dos dados</strong><br>
+                                        Os dados pessoais coletados pela Ouvidoria do FASPM têm como finalidade exclusiva:</p>
+                                    <ul>
+                                        <li>Registrar manifestações dos cidadãos;</li>
+                                        <li>Permitir o acompanhamento do andamento da manifestação;</li>
+                                        <li>Encaminhar respostas e comunicações relacionadas à demanda apresentada;</li>
+                                        <li>Garantir a adequada prestação do serviço público de ouvidoria.</li>
+                                    </ul>
+                                    <p>Os dados <u>não serão utilizados para finalidades diversas</u> daquelas relacionadas ao tratamento da manifestação.</p>
+
+                                    <p><strong>2. Dados pessoais coletados</strong></p>
+                                    <p><strong>2.1 Manifestações identificadas</strong><br>
+                                        No caso de manifestações identificadas, poderão ser coletados os seguintes dados:</p>
+                                    <ul>
+                                        <li><strong>E-mail (obrigatório)</strong> – utilizado para envio do número de protocolo, comunicações e resposta da manifestação;</li>
+                                        <li><strong>Nome (opcional)</strong> – utilizado apenas para fins de identificação do manifestante;</li>
+                                        <li><strong>Telefone (opcional)</strong> – utilizado exclusivamente para contato, se necessário.</li>
+                                    </ul>
+
+                                    <p><strong>2.2 Manifestações anônimas</strong><br>
+                                        A Ouvidoria do FASPM permite o registro de manifestações anônimas, hipótese em que nenhum dado pessoal identificável é coletado. Nesses casos, o acompanhamento será realizado <strong>exclusivamente por meio de protocolo e código de acesso (token)</strong>.</p>
+
+                                    <p><strong>3. Base legal para o tratamento</strong><br>
+                                        O tratamento fundamenta-se:</p>
+                                    <ul>
+                                        <li>No cumprimento de obrigação legal e regulatória;</li>
+                                        <li>Na execução de políticas públicas (Art. 7º, incisos II e III, da LGPD).</li>
+                                    </ul>
+
+                                    <p><strong>4. Acesso às informações</strong><br>
+                                        O acesso ao conteúdo é restrito aos servidores autorizados e ao próprio manifestante mediante credenciais. O FASPM não disponibiliza informações a terceiros não autorizados.</p>
+
+                                    <p><strong>5. Segurança da informação</strong><br>
+                                        Adotamos medidas técnicas para proteger os dados contra acessos não autorizados, incluindo controle de acesso, logs de registro e uso de código individual para consulta.</p>
+
+                                    <p><strong>6. Compartilhamento de dados</strong><br>
+                                        Os dados não são compartilhados, salvo por cumprimento de obrigação legal ou determinação de órgãos de controle.</p>
+
+                                    <p><strong>7. Prazo de armazenamento</strong><br>
+                                        Os dados serão armazenados pelo período necessário ao cumprimento das finalidades legais aplicáveis à administração pública.</p>
+
+                                    <p><strong>8. Direitos do titular dos dados</strong><br>
+                                        O titular pode solicitar: confirmação da existência de tratamento, acesso, correção de dados incompletos ou informações sobre o tratamento realizado.</p>
+
+                                    <p><strong>9. Disposições finais</strong><br>
+                                        Ao registrar uma manifestação, o cidadão declara estar <strong>ciente e de acordo</strong> com este Termo. Este documento poderá ser atualizado a qualquer tempo para aprimorar a conformidade legal.</p>
+
+                                    <p class="text-center mt-3"><strong>Fundo de Assistência Social da Polícia Militar do Pará – FASPM Ouvidoria</strong></p>
+                                </div>
+                            </div>
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="accept_terms" required>
+                                <label class="form-check-label small" for="accept_terms">
+                                    Li e estou de acordo com o Termo de Privacidade. *
+                                </label>
+                            </div>
                         </div>
 
                         <!-- Coluna direita -->
@@ -301,5 +314,37 @@
             }
         }
     });
+
+    function togglePersonalData(isAnonymous) {
+        const fields = ['email', 'nome', 'telefone'];
+        const container = document.getElementById('personal_data_fields');
+        const warning = document.getElementById('anonymous_warning');
+        const sigiloSim = document.getElementById('sigilo_sim');
+
+        if (isAnonymous) {
+            container.classList.add('d-none'); // Melhor esconder para evitar confusão
+            warning.classList.remove('d-none');
+            fields.forEach(f => {
+                const el = document.getElementById(f);
+                el.value = '';
+                el.disabled = true;
+                el.required = false;
+            });
+            sigiloSim.checked = true; // Anônimo implica sigilo total
+        } else {
+            container.classList.remove('d-none');
+            warning.classList.add('d-none');
+            fields.forEach(f => document.getElementById(f).disabled = false);
+            document.getElementById('email').required = true;
+        }
+    }
+
+    // Impedir envio se o termo não for aceito (validação nativa HTML5 'required' já ajuda)
+    document.getElementById('form-manifestacao').onsubmit = function() {
+        if (!document.getElementById('accept_terms').checked) {
+            alert("Você deve aceitar o Termo de Privacidade para continuar.");
+            return false;
+        }
+    };
 </script>
 @endsection

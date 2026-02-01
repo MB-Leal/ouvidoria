@@ -75,7 +75,7 @@ class ManifestacaoController extends Controller
     {
         // REMOVIDO: Bloqueio de edição por usuário ou status. 
         // A equipe agora tem autonomia total para correções.
-        
+
         $manifestacao->load(['tipo', 'responsavel']);
         $responsaveis = User::where('ativo', true)->get();
 
@@ -181,71 +181,103 @@ class ManifestacaoController extends Controller
 
     public function storeManual(Request $request)
     {
-        $validated = $request->validate([
+        $isAnonymous = $request->has('anonimo');
+
+        $rules = [
             'tipo_manifestacao_id' => 'required|exists:tipos_manifestacao,id',
-            'canal' => 'required|in:PRESENCIAL,EMAIL,TELEFONE,WEB',
-            'status' => 'required|in:ABERTO,EM_ANALISE,RESPONDIDO,FINALIZADO',
-            'nome' => 'nullable|required_if:anonimo,false|string|max:255',
-            'anonimo' => 'boolean',
-            'email' => 'nullable|email',
-            'telefone' => 'nullable|string|max:20',
             'assunto' => 'required|string|max:255',
             'descricao' => 'required|string|min:10',
-            'sigilo_dados' => 'boolean',
-            'anexo' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,doc,docx',
-            'prioridade' => 'required|in:baixa,media,alta,urgente',
-            'observacao_interna' => 'nullable|string',
-            'data_entrada' => 'nullable|date',
-            'data_registro_sistema' => 'nullable|date',
-        ]);
+            'canal' => 'required|string',
+            'status' => 'required|string',
+            'prioridade' => 'required|string',
+            'data_entrada' => 'required|date',
+        ];
 
-        $protocolo = ProtocoloService::gerarProtocolo();
+        if (!$isAnonymous) {
+            $rules['nome'] = 'required|string|max:255';
+            $rules['email'] = 'nullable|email'; // No admin o email pode ser opcional se o cara não tiver
+        }
 
-        $dadosManifestacao = [
-    'protocolo' => $protocolo,
-    'tipo_manifestacao_id' => $validated['tipo_manifestacao_id'],
-    'canal' => $validated['canal'],
-    'status' => $validated['status'],
-    'assunto' => $validated['assunto'],
-    'descricao' => $validated['descricao'],
-    'sigilo_dados' => $request->boolean('sigilo_dados'),
-    'prioridade' => $validated['prioridade'],
-    'observacao_interna' => $validated['observacao_interna'] ?? null,
-    'data_entrada' => $request->data_entrada ?? now(),
-    'data_registro_sistema' => $request->data_registro_sistema ?? now(),
-    'user_id' => auth()->id(), // Usamos user_id para registrar quem criou manualmente
-];
+        $validated = $request->validate($rules);
 
-        if ($request->boolean('anonimo')) {
-            $dadosManifestacao['nome'] = $request->nome;
-            $dadosManifestacao['email'] = $request->email;
-            $dadosManifestacao['telefone'] = $request->telefone;
+        // Geração de Protocolo e Token
+        $protocolo = \App\Services\ProtocoloService::gerarProtocolo();
+        $chaveAleatoria = strtoupper(\Illuminate\Support\Str::random(7));
+        $tokenHash = \Illuminate\Support\Facades\Hash::make($chaveAleatoria);
+
+        $dados = [
+            'protocolo' => $protocolo,
+            'token' => $tokenHash,
+            'tipo_manifestacao_id' => $validated['tipo_manifestacao_id'],
+            'assunto' => $validated['assunto'],
+            'descricao' => $validated['descricao'],
+            'canal' => $validated['canal'],
+            'status' => $validated['status'],
+            'prioridade' => $validated['prioridade'],
+            'data_entrada' => $validated['data_entrada'],
+            'data_registro_sistema' => now(),
+            'sigilo_dados' => $request->has('sigilo_dados'),
+            'observacao_interna' => $request->observacao_interna,
+            'user_id' => auth()->id(), // Ouvidor que cadastrou
+        ];
+
+        if ($isAnonymous) {
+            $dados['nome'] = 'Anônimo';
+            $dados['email'] = null;
         } else {
-            $dadosManifestacao['nome'] = $validated['nome'];
-            $dadosManifestacao['email'] = $validated['email'] ?? null;
-            $dadosManifestacao['telefone'] = $validated['telefone'] ?? null;
+            $dados['nome'] = $validated['nome'];
+            $dados['email'] = $validated['email'] ?? null;
+            $dados['telefone'] = $request->telefone;
         }
 
-        if ($validated['status'] == 'RESPONDIDO') {
-            $dadosManifestacao['data_resposta'] = now();
+        $manifestacao = Manifestacao::create($dados);
+
+        // Processar anexo (mantido)
+        if ($request->hasFile('anexo')) {
+            $path = $request->file('anexo')->store('anexos', 'public');
+            $manifestacao->update(['anexo_path' => $path]);
         }
 
-        DB::beginTransaction();
-        try {
-            $manifestacao = Manifestacao::create($dadosManifestacao);
+        // Redireciona de volta com os dados para o Modal
+        return back()->with([
+            'success_manual' => true,
+            'protocolo' => $protocolo,
+            'chave_acesso' => $chaveAleatoria,
+            'email_manifestante' => $manifestacao->email,
+            'manifestacao_id' => $manifestacao->id
+        ]);
+    }
 
-            if ($request->hasFile('anexo')) {
-                $path = $request->file('anexo')->store('anexos', 'public');
-                $manifestacao->update(['anexo_path' => $path]);
+    /**
+     * Rota para disparar e-mail manualmente a partir do modal
+     */
+    public function notificarManual(Request $request, Manifestacao $manifestacao)
+    {
+        // O token (chave) vem do campo oculto no modal
+        $chave = $request->input('chave');
+
+        if ($manifestacao->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($manifestacao->email)
+                    ->send(new \App\Mail\ManifestacaoRecebida($manifestacao, $chave));
+
+                return back()->with('success', 'Notificação enviada com sucesso para ' . $manifestacao->email);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Falha ao enviar e-mail: ' . $e->getMessage());
             }
-
-            DB::commit();
-
-            return redirect()->route('admin.manifestacoes.show', $manifestacao)
-                ->with('success', 'Protocolo: ' . $protocolo);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Erro: ' . $e->getMessage()]);
         }
+
+        return back()->with('error', 'Manifestante não possui e-mail cadastrado.');
+    }
+
+
+    public function finalizar(Manifestacao $manifestacao)
+    {
+        $manifestacao->update(['status' => 'FINALIZADO']);
+
+        // Apenas chama a função e ela faz o resto
+        $this->notificarManifestante($manifestacao, null, "Sua manifestação foi FINALIZADA!");
+
+        return back()->with('success', 'Manifestação encerrada e cidadão notificado.');
     }
 }

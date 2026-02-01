@@ -341,62 +341,94 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalSucessoManual" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i> Cadastro Realizado!</h5>
+            </div>
+            <div class="modal-body text-center p-4">
+                <p class="mb-1">Manifestação registrada com sucesso.</p>
+                <div class="bg-light p-3 rounded mb-3 border">
+                    <small class="text-muted d-block">PROTOCOLO</small>
+                    <h4 class="text-primary fw-bold mb-2">{{ session('protocolo') }}</h4>
+                    <small class="text-muted d-block">CHAVE DE ACESSO (TOKEN)</small>
+                    <h4 class="text-danger fw-bold">{{ session('chave_acesso') }}</h4>
+                </div>
+
+                @if(session('email_manifestante'))
+                    <div class="alert alert-info small">
+                        O manifestante forneceu o e-mail: <strong>{{ session('email_manifestante') }}</strong>
+                    </div>
+                    <form action="{{ route('admin.manifestacoes.notificar', session('manifestacao_id')) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="chave" value="{{ session('chave_acesso') }}">
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-paper-plane me-2"></i> Enviar Dados por E-mail
+                        </button>
+                    </form>
+                @else
+                    <div class="alert alert-warning small">
+                        <strong>Manifestação Anônima:</strong> Não há e-mail para envio. Imprima os dados para o cidadão.
+                    </div>
+                @endif
+                
+                <button onclick="window.print()" class="btn btn-outline-secondary w-100 mb-2">
+                    <i class="fas fa-print me-2"></i> Imprimir Comprovante
+                </button>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ route('admin.manifestacoes.index') }}" class="btn btn-secondary">Fechar e Ir para Lista</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if(session('success_manual'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var myModal = new bootstrap.Modal(document.getElementById('modalSucessoManual'));
+        myModal.show();
+    });
+</script>
+@endif
 @endsection
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {        
+    document.addEventListener('DOMContentLoaded', function() {
+        // Controle de Anonimato no Admin
+        const anonimoCheckbox = document.getElementById('anonimo');
+        const dadosPessoaisDiv = document.getElementById('dados-pessoais');
+        const nomeInput = document.getElementById('nome');
+        const emailInput = document.getElementById('email');
 
-        // Máscara de telefone
+        function toggleAnonimo() {
+            if (anonimoCheckbox.checked) {
+                dadosPessoaisDiv.style.display = 'none';
+                nomeInput.required = false;
+                // Ao ser anônimo no admin, garantimos que o sistema grave como Anônimo
+            } else {
+                dadosPessoaisDiv.style.display = 'block';
+                nomeInput.required = true;
+            }
+        }
+
+        anonimoCheckbox.addEventListener('change', toggleAnonimo);
+        toggleAnonimo(); // Executa ao carregar para caso de erro de validação (old)
+
+        // Máscara de telefone (mantida)
         const telefoneInput = document.getElementById('telefone');
         if (telefoneInput) {
             telefoneInput.addEventListener('input', function(e) {
                 let value = e.target.value.replace(/\D/g, '');
-
-                if (value.length > 11) {
-                    value = value.substring(0, 11);
-                }
-
+                if (value.length > 11) value = value.substring(0, 11);
                 if (value.length > 10) {
-                    // Formato: (00) 00000-0000
                     value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-                } else if (value.length > 6) {
-                    // Formato: (00) 0000-0000
-                    value = value.replace(/^(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
                 } else if (value.length > 2) {
-                    // Formato: (00) 0000
-                    value = value.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
-                } else if (value.length > 0) {
-                    value = '(' + value;
+                    value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
                 }
-
                 e.target.value = value;
-            });
-        }
-
-        // Preview do tipo selecionado
-        const tipoSelect = document.getElementById('tipo_manifestacao_id');
-        if (tipoSelect) {
-            tipoSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const cor = selectedOption.getAttribute('data-cor');
-                if (cor) {
-                    this.style.borderColor = cor;
-                }
-            });
-        }
-
-        // Validação de tamanho de arquivo
-        const anexoInput = document.getElementById('anexo');
-        if (anexoInput) {
-            anexoInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                const maxSize = 5 * 1024 * 1024; // 5MB
-
-                if (file && file.size > maxSize) {
-                    alert('O arquivo é muito grande. O tamanho máximo é 5MB.');
-                    e.target.value = '';
-                }
             });
         }
     });
