@@ -1,8 +1,8 @@
 APP_NAME="Ouvidoria FASPM/PA"
 APP_ENV=production
-APP_KEY=base64:vgqempQeTWzhVX4IiI9kD5nxFO2Vl5dqEoZyTs9klZw=
+APP_KEY=
 APP_DEBUG=true
-APP_URL=https://www.faspmpa.com.br/ouvidoria
+APP_URL=191.252.182.238
 APP_TIMEZONE=America/Belem
 
 LOG_CHANNEL=stack
@@ -10,20 +10,20 @@ LOG_DEPRECATIONS_CHANNEL=null
 LOG_LEVEL=debug
 
 ##banco de dados de produção
-#DB_CONNECTION=mysql
-#DB_HOST=ouvidoria_dev.vpshost2785.mysql.dbaas.com.br
-#DB_PORT=3306
-#DB_DATABASE=ouvidoria_dev
-#DB_USERNAME=ouvidoria_dev
-#DB_PASSWORD=FAS@ouvidoria2
-
-##banco de dados de desenvolvimento - local
 DB_CONNECTION=mysql
-DB_HOST=localhost
+DB_HOST=191.252.182.238
 DB_PORT=3306
 DB_DATABASE=ouvidoria
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=ouvidoria_fas
+DB_PASSWORD=FAS@ouvidoria#2
+
+##banco de dados de desenvolvimento - local
+#DB_CONNECTION=mysql
+#DB_HOST=localhost
+#DB_PORT=3306
+#DB_DATABASE=ouvidoria
+#DB_USERNAME=root
+#DB_PASSWORD=
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=file
